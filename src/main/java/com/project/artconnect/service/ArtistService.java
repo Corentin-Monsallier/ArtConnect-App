@@ -1,9 +1,10 @@
 package com.project.artconnect.service;
 
-import com.project.artconnect.model.Artist;
-import com.project.artconnect.model.Discipline;
 import java.util.List;
 import java.util.Optional;
+
+import com.project.artconnect.model.Artist;
+import com.project.artconnect.model.Discipline;
 
 public interface ArtistService {
     List<Artist> getAllArtists();
@@ -14,7 +15,7 @@ public interface ArtistService {
 
     void updateArtist(Artist artist);
 
-    void deleteArtist(String name);
+    void deleteArtist(int id);
 
     List<Discipline> getAllDisciplines();
 

@@ -1,13 +1,13 @@
 package com.project.artconnect.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import com.project.artconnect.dao.ArtistDao;
 import com.project.artconnect.model.Artist;
 import com.project.artconnect.model.Discipline;
 import com.project.artconnect.service.ArtistService;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 public class JdbcArtistService implements ArtistService {
 
@@ -46,9 +46,9 @@ public class JdbcArtistService implements ArtistService {
     }
 
     @Override
-    public void deleteArtist(String artistName) {
+    public void deleteArtist(int id) {
 
-        artistDao.delete(artistName);
+        artistDao.delete(id);
     }
 
     @Override
