@@ -12,10 +12,6 @@ import com.project.artconnect.dao.ArtistDao;
 import com.project.artconnect.model.Artist;
 import com.project.artconnect.util.ConnectionManager;
 
-/**
- * JDBC implementation for ArtistDao.
- * TODO: Students must implement this using JDBC and SQL.
- */
 public class JdbcArtistDao implements ArtistDao {
 
     @Override

@@ -1,17 +1,14 @@
 package com.project.artconnect.persistence;
 
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.project.artconnect.dao.ArtworkDao;
 import com.project.artconnect.model.Artwork;
 import com.project.artconnect.model.ArtworkStatus;
 import com.project.artconnect.util.ConnectionManager;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-
-/**
- * JDBC implementation for ArtworkDao.
- */
 public class JdbcArtworkDao implements ArtworkDao {
 
     @Override
@@ -38,18 +35,14 @@ public class JdbcArtworkDao implements ArtworkDao {
                 artwork.setDimensions(result.getString("dimensions"));
                 artwork.setDescription(result.getString("description"));
                 artwork.setPrice(result.getDouble("price"));
-
-                artwork.setStatus(
-                        ArtworkStatus.valueOf(
-                                result.getString("status").toUpperCase()));
-
+                artwork.setStatus(ArtworkStatus.valueOf(result.getString("status").toUpperCase()));
                 artwork.setId_artist(result.getInt("id_artist"));
 
                 artworks.add(artwork);
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e);
         }
 
         return artworks;
@@ -78,7 +71,7 @@ public class JdbcArtworkDao implements ArtworkDao {
             statement.executeUpdate();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e);
         }
     }
 
@@ -103,45 +96,43 @@ public class JdbcArtworkDao implements ArtworkDao {
             statement.setString(8, artwork.getStatus().name().toLowerCase());
             statement.setInt(9, artwork.getId_artist());
             statement.setInt(10, artwork.getId_artwork());
-
             statement.executeUpdate();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e);
         }
     }
 
     @Override
-    public void delete(String title) {
+    public void delete(int id) {
 
-        String sql = "DELETE FROM Artwork WHERE title_art = ?";
+        String sql = "DELETE FROM Artwork WHERE id_artwork=?";
 
         try (
                 Connection connection = ConnectionManager.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            statement.setString(1, title);
+            statement.setInt(1, id);
 
             statement.executeUpdate();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e);
         }
     }
 
     @Override
-    public List<Artwork> findByArtistName(String artistName) {
+    public List<Artwork> findByArtistId(int id_artist) {
 
         List<Artwork> artworks = new ArrayList<>();
 
-        String sql = "SELECT aw.* " + "FROM Artwork aw " + "JOIN Artist a ON aw.id_artist = a.id_artist "
-                + "JOIN User_ u ON a.id_user = u.id_user " + "WHERE u.name_user = ?";
+        String sql = "SELECT * FROM Artwork WHERE id_artist=?";
 
         try (
                 Connection connection = ConnectionManager.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            statement.setString(1, artistName);
+            statement.setInt(1, id_artist);
 
             ResultSet result = statement.executeQuery();
 
@@ -157,18 +148,14 @@ public class JdbcArtworkDao implements ArtworkDao {
                 artwork.setDimensions(result.getString("dimensions"));
                 artwork.setDescription(result.getString("description"));
                 artwork.setPrice(result.getDouble("price"));
-
-                artwork.setStatus(
-                        ArtworkStatus.valueOf(
-                                result.getString("status").toUpperCase()));
-
+                artwork.setStatus(ArtworkStatus.valueOf(result.getString("status").toUpperCase()));
                 artwork.setId_artist(result.getInt("id_artist"));
 
                 artworks.add(artwork);
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e);
         }
 
         return artworks;
