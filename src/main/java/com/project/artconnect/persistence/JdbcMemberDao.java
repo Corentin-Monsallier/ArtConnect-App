@@ -19,7 +19,7 @@ public class JdbcMemberDao implements MemberDao {
     public List<Member> findAll() {
         List<Member> members = new ArrayList<>();
 
-        String sql = "SELECT * FROM Member m JOIN User_ u ON m.id_user = u.id_user";
+        String sql = "SELECT * FROM Member_ m JOIN User_ u ON m.id_user = u.id_user";
 
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql);
@@ -37,10 +37,7 @@ public class JdbcMemberDao implements MemberDao {
                 member.setCity(result.getString("city"));
                 // Member
                 member.setId_member(result.getInt("id_member"));
-                String membershipTypeStr = result.getString("membership_type");
-                if (membershipTypeStr != null) {
-                    member.setMembership_type(MembershipType.valueOf(membershipTypeStr));
-                }
+                member.setMembership_type(MembershipType.valueOf(result.getString("membership_type").toUpperCase()));
                 
                 members.add(member);
             }
@@ -55,7 +52,7 @@ public class JdbcMemberDao implements MemberDao {
     @Override
     public void save(Member member) {
         String sqlUser = "INSERT INTO User_(name_user, email, birth_year, phone, city) VALUES (?, ?, ?, ?, ?)";
-        String sqlMember = "INSERT INTO Member(id_user, membership_type) VALUES (?, ?)";
+        String sqlMember = "INSERT INTO Member_(id_user, membership_type) VALUES (?, ?)";
 
         try (Connection connection = ConnectionManager.getConnection()) {
             connection.setAutoCommit(false);
@@ -90,7 +87,7 @@ public class JdbcMemberDao implements MemberDao {
     @Override
     public void update(Member member) {
         String sqlUser = "UPDATE User_ SET name_user=?, email=?, birth_year=?, phone=?, city=? WHERE id_user=?";
-        String sqlMember = "UPDATE Member SET membership_type=? WHERE id_member=?";
+        String sqlMember = "UPDATE Member_ SET membership_type=? WHERE id_member=?";
 
         try (Connection connection = ConnectionManager.getConnection()) {
 
@@ -115,7 +112,7 @@ public class JdbcMemberDao implements MemberDao {
 
     @Override
     public void delete(int id) {
-        String sql = "DELETE m, u FROM Member m JOIN User_ u ON m.id_user = u.id_user WHERE m.id_member = ?";
+        String sql = "DELETE m, u FROM Member_ m JOIN User_ u ON m.id_user = u.id_user WHERE m.id_member = ?";
 
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -132,7 +129,7 @@ public class JdbcMemberDao implements MemberDao {
     public List<Member> findByMembershipType(MembershipType type) {
         List<Member> members = new ArrayList<>();
 
-        String sql = "SELECT * FROM Member m JOIN User_ u ON m.id_user = u.id_user WHERE m.membership_type = ?";
+        String sql = "SELECT * FROM Member_ m JOIN User_ u ON m.id_user = u.id_user WHERE m.membership_type = ?";
 
         try (Connection connection = ConnectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {

@@ -31,12 +31,8 @@ import com.project.artconnect.service.impl.JdbcMemberService;
 import com.project.artconnect.service.impl.JdbcReviewService;
 import com.project.artconnect.service.impl.JdbcWorkshopService;
 
-/**
- * Service Provider to manage singleton instances of services and handle their
- * initialization.
- */
-public class ServiceProvider {
 
+public class ServiceProvider {
     // Address
     private static final AddressService addressService = new JdbcAddressService();
     public static AddressService getAddressService() {
