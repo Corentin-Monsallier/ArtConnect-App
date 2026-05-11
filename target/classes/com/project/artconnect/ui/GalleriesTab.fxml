@@ -16,6 +16,20 @@
                 top="10.0" />
     </padding>
 
+    <HBox spacing="10.0" alignment="CENTER_LEFT">
+
+        <TextField fx:id="searchField"
+                   promptText="Search galleries..."
+                   HBox.hgrow="ALWAYS" />
+
+        <Button text="Search"
+                onAction="#handleSearch" />
+
+        <Button text="Reset"
+                onAction="#handleReset" />
+
+    </HBox>
+
     <TableView fx:id="galleryTable"
                VBox.vgrow="ALWAYS">
 

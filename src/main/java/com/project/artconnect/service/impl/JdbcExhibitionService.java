@@ -21,7 +21,18 @@ public class JdbcExhibitionService implements ExhibitionService {
     }
 
     @Override
+    public List<String> getAllThemes() {
+
+        return exhibitionDao.findAll()
+                .stream()
+                .map(Exhibition::getTheme)
+                .distinct()
+                .toList();
+    }
+
+    @Override
     public Optional<Exhibition> getExhibitionById(int id) {
+
         return exhibitionDao.findAll()
                 .stream()
                 .filter(e -> e.getId_exhibition() == id)

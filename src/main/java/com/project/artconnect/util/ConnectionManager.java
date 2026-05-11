@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class ConnectionManager {
 
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/artconnect?useSSL=false&serverTimezone=UTC";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/artconnect?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC";
 
     private static final String DB_USER = "root";
 

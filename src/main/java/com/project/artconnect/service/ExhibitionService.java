@@ -9,6 +9,8 @@ public interface ExhibitionService {
 
     List<Exhibition> getAllExhibitions();
 
+    List<String> getAllThemes();
+
     Optional<Exhibition> getExhibitionById(int id);
 
     void createExhibition(Exhibition exhibition);

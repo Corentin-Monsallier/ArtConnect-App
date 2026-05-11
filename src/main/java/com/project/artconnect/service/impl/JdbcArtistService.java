@@ -52,12 +52,6 @@ public class JdbcArtistService implements ArtistService {
     }
 
     @Override
-    public List<Discipline> getAllDisciplines() {
-
-        return new ArrayList<>();
-    }
-
-    @Override
     public List<Artist> searchArtists(
             String name,
             String city,

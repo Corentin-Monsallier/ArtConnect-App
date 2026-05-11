@@ -10,6 +10,8 @@ public interface ArtworkService {
 
     List<Artwork> getAllArtworks();
 
+    List<String> getAllTypes();
+
     Optional<Artwork> getArtworkByTitle(String title);
 
     List<Artwork> getArtworksByArtist(Artist artist);

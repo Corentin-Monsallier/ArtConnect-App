@@ -1,14 +1,15 @@
 package com.project.artconnect.ui;
 
 import com.project.artconnect.model.Artist;
-import com.project.artconnect.model.Discipline;
 import com.project.artconnect.service.ArtistService;
 import com.project.artconnect.util.ServiceProvider;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 public class ArtistController {
@@ -31,10 +32,8 @@ public class ArtistController {
     @FXML
     private TextField searchField;
 
-    @FXML
-    private ComboBox<String> disciplineFilter;
-
-    private final ArtistService artistService = ServiceProvider.getArtistService();
+    private final ArtistService artistService =
+            ServiceProvider.getArtistService();
 
     @FXML
     public void initialize() {
@@ -52,46 +51,29 @@ public class ArtistController {
                 new PropertyValueFactory<>("birth_year"));
 
         loadArtists();
-
-        loadDisciplines();
     }
 
     private void loadArtists() {
 
-        ObservableList<Artist> artists = FXCollections.observableArrayList(
-                artistService.getAllArtists());
+        ObservableList<Artist> artists =
+                FXCollections.observableArrayList(
+                        artistService.getAllArtists());
 
         artistTable.setItems(artists);
-    }
-
-    private void loadDisciplines() {
-
-        ObservableList<String> disciplines = FXCollections.observableArrayList();
-
-        disciplines.add("All");
-
-        for (Discipline d : artistService.getAllDisciplines()) {
-
-            disciplines.add(d.getName_discipline());
-        }
-
-        disciplineFilter.setItems(disciplines);
-
-        disciplineFilter.setValue("All");
     }
 
     @FXML
     private void handleSearch() {
 
-        String searchText = searchField.getText();
+        String searchText =
+                searchField.getText();
 
-        String discipline = disciplineFilter.getValue();
-
-        ObservableList<Artist> filteredArtists = FXCollections.observableArrayList(
-                artistService.searchArtists(
-                        searchText,
-                        null,
-                        discipline));
+        ObservableList<Artist> filteredArtists =
+                FXCollections.observableArrayList(
+                        artistService.searchArtists(
+                                searchText,
+                                null,
+                                null));
 
         artistTable.setItems(filteredArtists);
     }
@@ -100,8 +82,6 @@ public class ArtistController {
     private void handleReset() {
 
         searchField.clear();
-
-        disciplineFilter.setValue("All");
 
         loadArtists();
     }

@@ -9,8 +9,7 @@ import com.project.artconnect.service.ArtworkService;
 import java.util.List;
 import java.util.Optional;
 
-public class JdbcArtworkService
-        implements ArtworkService {
+public class JdbcArtworkService implements ArtworkService {
 
     private final ArtworkDao artworkDao;
 
@@ -21,6 +20,15 @@ public class JdbcArtworkService
     @Override
     public List<Artwork> getAllArtworks() {
         return artworkDao.findAll();
+    }
+
+    @Override
+    public List<String> getAllTypes() {
+        return artworkDao.findAll()
+                .stream()
+                .map(Artwork::getType)
+                .distinct()
+                .toList();
     }
 
     @Override

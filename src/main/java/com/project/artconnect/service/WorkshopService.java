@@ -9,6 +9,8 @@ public interface WorkshopService {
 
     List<Workshop> getAllWorkshops();
 
+    List<String> getAllLevels();
+
     Optional<Workshop> getWorkshopById(int id);
 
     void createWorkshop(Workshop workshop);

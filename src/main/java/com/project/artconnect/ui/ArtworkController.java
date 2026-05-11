@@ -1,13 +1,17 @@
 package com.project.artconnect.ui;
 
 import com.project.artconnect.model.Artwork;
+import com.project.artconnect.model.ArtworkStatus;
 import com.project.artconnect.service.ArtworkService;
 import com.project.artconnect.util.ServiceProvider;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 public class ArtworkController {
@@ -30,6 +34,12 @@ public class ArtworkController {
     @FXML
     private TableColumn<Artwork, Integer> artistColumn;
 
+    @FXML
+    private TextField searchField;
+
+    @FXML
+    private ComboBox<String> typeFilter;
+
     private final ArtworkService artworkService = ServiceProvider.getArtworkService();
 
     @FXML
@@ -45,6 +55,72 @@ public class ArtworkController {
 
         artistColumn.setCellValueFactory(new PropertyValueFactory<>("id_artist"));
 
-        artworkTable.setItems(FXCollections.observableArrayList(artworkService.getAllArtworks()));
+        loadArtworks();
+
+        loadTypes();
+
+        typeFilter.setOnAction(event -> handleSearch());
+    }
+
+    private void loadArtworks() {
+
+        ObservableList<Artwork> artworks =
+                FXCollections.observableArrayList(
+                        artworkService.getAllArtworks());
+
+        artworkTable.setItems(artworks);
+    }
+
+    private void loadTypes() {
+
+        ObservableList<String> types = FXCollections.observableArrayList();
+
+        types.add("All");
+
+        types.addAll(artworkService.getAllTypes());
+
+        typeFilter.setItems(types);
+
+        typeFilter.setValue("All");
+    }
+
+    @FXML
+    private void handleSearch() {
+
+        String searchText = searchField.getText().toLowerCase();
+
+        String selectedType = typeFilter.getValue();
+
+        ObservableList<Artwork> filteredArtworks =
+                FXCollections.observableArrayList();
+
+        for (Artwork artwork : artworkService.getAllArtworks()) {
+
+            boolean matchesSearch =
+                    artwork.getTitle_art()
+                            .toLowerCase()
+                            .contains(searchText);
+
+            boolean matchesType =
+                    selectedType.equals("All")
+                    || artwork.getType()
+                            .equalsIgnoreCase(selectedType);
+
+            if (matchesSearch && matchesType) {
+                filteredArtworks.add(artwork);
+            }
+        }
+
+        artworkTable.setItems(filteredArtworks);
+    }
+
+    @FXML
+    private void handleReset() {
+
+        searchField.clear();
+
+        typeFilter.setValue("All");
+
+        loadArtworks();
     }
 }

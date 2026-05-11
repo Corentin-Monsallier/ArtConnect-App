@@ -25,6 +25,16 @@ public class JdbcWorkshopService implements WorkshopService {
     }
 
     @Override
+    public List<String> getAllLevels() {
+
+        return workshopDao.findAll()
+                .stream()
+                .map(Workshop::getLevel)
+                .distinct()
+                .toList();
+    }
+
+    @Override
     public Optional<Workshop> getWorkshopById(int id) {
         return workshopDao.findAll()
                 .stream()
