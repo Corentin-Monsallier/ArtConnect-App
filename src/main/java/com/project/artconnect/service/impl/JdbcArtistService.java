@@ -1,12 +1,10 @@
 package com.project.artconnect.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import com.project.artconnect.dao.ArtistDao;
 import com.project.artconnect.model.Artist;
-import com.project.artconnect.model.Discipline;
 import com.project.artconnect.service.ArtistService;
 
 public class JdbcArtistService implements ArtistService {

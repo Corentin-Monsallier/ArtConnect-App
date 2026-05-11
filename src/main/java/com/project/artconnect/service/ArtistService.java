@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.project.artconnect.model.Artist;
-import com.project.artconnect.model.Discipline;
 
 public interface ArtistService {
     List<Artist> getAllArtists();
