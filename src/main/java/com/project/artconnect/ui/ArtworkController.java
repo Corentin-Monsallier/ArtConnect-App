@@ -1,7 +1,6 @@
 package com.project.artconnect.ui;
 
 import com.project.artconnect.model.Artwork;
-import com.project.artconnect.model.ArtworkStatus;
 import com.project.artconnect.service.ArtworkService;
 import com.project.artconnect.util.ServiceProvider;
 
@@ -20,10 +19,25 @@ public class ArtworkController {
     private TableView<Artwork> artworkTable;
 
     @FXML
+    private TableColumn<Artwork, Integer> idColumn;
+
+    @FXML
     private TableColumn<Artwork, String> titleColumn;
 
     @FXML
+    private TableColumn<Artwork, Integer> yearColumn;
+
+    @FXML
     private TableColumn<Artwork, String> typeColumn;
+
+    @FXML
+    private TableColumn<Artwork, String> mediumColumn;
+
+    @FXML
+    private TableColumn<Artwork, String> dimensionsColumn;
+
+    @FXML
+    private TableColumn<Artwork, String> descriptionColumn;
 
     @FXML
     private TableColumn<Artwork, Double> priceColumn;
@@ -35,83 +49,174 @@ public class ArtworkController {
     private TableColumn<Artwork, Integer> artistColumn;
 
     @FXML
+    private TableColumn<Artwork, String> tagsColumn;
+
+    @FXML
     private TextField searchField;
+
+    @FXML
+    private ComboBox<String> statusFilter;
 
     @FXML
     private ComboBox<String> typeFilter;
 
-    private final ArtworkService artworkService = ServiceProvider.getArtworkService();
+    @FXML
+    private ComboBox<String> mediumFilter;
+
+    private final ArtworkService artworkService =
+            ServiceProvider.getArtworkService();
 
     @FXML
     public void initialize() {
 
-        titleColumn.setCellValueFactory(new PropertyValueFactory<>("title_art"));
+        idColumn.setCellValueFactory(
+                new PropertyValueFactory<>("id_artwork"));
 
-        typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
+        titleColumn.setCellValueFactory(
+                new PropertyValueFactory<>("title_art"));
 
-        priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
+        yearColumn.setCellValueFactory(
+                new PropertyValueFactory<>("creation_year"));
 
-        statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
+        typeColumn.setCellValueFactory(
+                new PropertyValueFactory<>("type"));
 
-        artistColumn.setCellValueFactory(new PropertyValueFactory<>("id_artist"));
+        mediumColumn.setCellValueFactory(
+                new PropertyValueFactory<>("medium"));
+
+        dimensionsColumn.setCellValueFactory(
+                new PropertyValueFactory<>("dimensions"));
+
+        descriptionColumn.setCellValueFactory(
+                new PropertyValueFactory<>("description"));
+
+        priceColumn.setCellValueFactory(
+                new PropertyValueFactory<>("price"));
+
+        statusColumn.setCellValueFactory(
+                new PropertyValueFactory<>("status"));
+
+        artistColumn.setCellValueFactory(
+                new PropertyValueFactory<>("id_artist"));
+
+        tagsColumn.setCellValueFactory(
+                new PropertyValueFactory<>("tags"));
 
         loadArtworks();
-
+        loadStatuses();
         loadTypes();
+        loadMediums();
 
+        statusFilter.setOnAction(event -> handleSearch());
         typeFilter.setOnAction(event -> handleSearch());
+        mediumFilter.setOnAction(event -> handleSearch());
+
     }
 
     private void loadArtworks() {
 
-        ObservableList<Artwork> artworks =
+        artworkTable.setItems(
                 FXCollections.observableArrayList(
-                        artworkService.getAllArtworks());
+                        artworkService.getAllArtworks()));
+    }
 
-        artworkTable.setItems(artworks);
+    private void loadStatuses() {
+
+        statusFilter.setItems(
+                FXCollections.observableArrayList(
+                        "All status",
+                        "available",
+                        "sold",
+                        "reserved"
+                )
+        );
+
+        statusFilter.setValue("All status");
     }
 
     private void loadTypes() {
 
-        ObservableList<String> types = FXCollections.observableArrayList();
+        typeFilter.setItems(
+                FXCollections.observableArrayList(
+                        "All types",
+                        "painting",
+                        "photography",
+                        "digital",
+                        "sculpture",
+                        "illustration"
+                )
+        );
 
-        types.add("All");
+        typeFilter.setValue("All types");
+    }
 
-        types.addAll(artworkService.getAllTypes());
+    private void loadMediums() {
 
-        typeFilter.setItems(types);
+        mediumFilter.setItems(
+                FXCollections.observableArrayList(
+                        "All mediums",
+                        "oil",
+                        "acrylic",
+                        "canvas",
+                        "digital",
+                        "mixed media"
+                )
+        );
 
-        typeFilter.setValue("All");
+        mediumFilter.setValue("All mediums");
     }
 
     @FXML
     private void handleSearch() {
 
-        String searchText = searchField.getText().toLowerCase();
+        String search =
+                searchField.getText().toLowerCase();
 
-        String selectedType = typeFilter.getValue();
+        String status =
+                statusFilter.getValue();
 
-        ObservableList<Artwork> filteredArtworks =
+        String type =
+                typeFilter.getValue();
+
+        String medium =
+                mediumFilter.getValue();
+
+        ObservableList<Artwork> filtered =
                 FXCollections.observableArrayList();
 
         for (Artwork artwork : artworkService.getAllArtworks()) {
 
-            boolean matchesSearch =
+            boolean titleMatch =
                     artwork.getTitle_art()
                             .toLowerCase()
-                            .contains(searchText);
+                            .contains(search);
 
-            boolean matchesType =
-                    selectedType.equals("All")
-                    || artwork.getType()
-                            .equalsIgnoreCase(selectedType);
+            boolean statusMatch =
+                    status.equals("All")
+                            || artwork.getStatus()
+                            .toString()
+                            .equalsIgnoreCase(status);
 
-            if (matchesSearch && matchesType) {
-                filteredArtworks.add(artwork);
+            boolean typeMatch =
+                    type.equals("All")
+                            || artwork.getType()
+                            .equalsIgnoreCase(type);
+
+            boolean mediumMatch =
+                    medium.equals("All")
+                            || artwork.getMedium()
+                            .equalsIgnoreCase(medium);
+
+            if (titleMatch
+                    && statusMatch
+                    && typeMatch
+                    && mediumMatch) {
+
+                filtered.add(artwork);
             }
         }
 
-        artworkTable.setItems(filteredArtworks);
+        artworkTable.setItems(filtered);
     }
 
     @FXML
@@ -119,7 +224,9 @@ public class ArtworkController {
 
         searchField.clear();
 
-        typeFilter.setValue("All");
+        statusFilter.setValue("All status");
+        typeFilter.setValue("All types");
+        mediumFilter.setValue("All mediums");
 
         loadArtworks();
     }

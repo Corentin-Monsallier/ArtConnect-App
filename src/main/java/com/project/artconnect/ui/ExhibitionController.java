@@ -4,7 +4,6 @@ import com.project.artconnect.model.Exhibition;
 import com.project.artconnect.service.ExhibitionService;
 import com.project.artconnect.util.ServiceProvider;
 
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -20,16 +19,28 @@ public class ExhibitionController {
     private TableView<Exhibition> exhibitionTable;
 
     @FXML
+    private TableColumn<Exhibition, Integer> idColumn;
+
+    @FXML
     private TableColumn<Exhibition, String> titleColumn;
 
     @FXML
-    private TableColumn<Exhibition, String> galleryColumn;
+    private TableColumn<Exhibition, String> curatorColumn;
 
     @FXML
-    private TableColumn<Exhibition, String> dateColumn;
+    private TableColumn<Exhibition, String> startDateColumn;
+
+    @FXML
+    private TableColumn<Exhibition, String> endDateColumn;
 
     @FXML
     private TableColumn<Exhibition, String> themeColumn;
+
+    @FXML
+    private TableColumn<Exhibition, String> descriptionColumn;
+
+    @FXML
+    private TableColumn<Exhibition, Integer> galleryColumn;
 
     @FXML
     private TextField searchField;
@@ -43,26 +54,31 @@ public class ExhibitionController {
     @FXML
     public void initialize() {
 
+        idColumn.setCellValueFactory(
+                new PropertyValueFactory<>("id_exhibition"));
+
         titleColumn.setCellValueFactory(
                 new PropertyValueFactory<>("title_exhib"));
+
+        curatorColumn.setCellValueFactory(
+                new PropertyValueFactory<>("curator_name"));
+
+        startDateColumn.setCellValueFactory(
+                new PropertyValueFactory<>("start_date"));
+
+        endDateColumn.setCellValueFactory(
+                new PropertyValueFactory<>("end_date"));
 
         themeColumn.setCellValueFactory(
                 new PropertyValueFactory<>("theme"));
 
-        dateColumn.setCellValueFactory(cellData ->
-                new SimpleStringProperty(
-                        cellData.getValue()
-                                .getStart_date()
-                                .toString()));
+        descriptionColumn.setCellValueFactory(
+                new PropertyValueFactory<>("description"));
 
-        galleryColumn.setCellValueFactory(cellData ->
-                new SimpleStringProperty(
-                        String.valueOf(
-                                cellData.getValue()
-                                        .getId_gallery())));
+        galleryColumn.setCellValueFactory(
+                new PropertyValueFactory<>("id_gallery"));
 
         loadExhibitions();
-
         loadThemes();
 
         themeFilter.setOnAction(event -> handleSearch());
@@ -70,67 +86,65 @@ public class ExhibitionController {
 
     private void loadExhibitions() {
 
-        ObservableList<Exhibition> exhibitions =
+        exhibitionTable.setItems(
                 FXCollections.observableArrayList(
-                        exhibitionService.getAllExhibitions());
-
-        exhibitionTable.setItems(exhibitions);
+                        exhibitionService.getAllExhibitions()));
     }
 
     private void loadThemes() {
 
-        ObservableList<String> themes =
-                FXCollections.observableArrayList();
+        themeFilter.setItems(
+                FXCollections.observableArrayList(
+                        "All themes",
+                        "Modern",
+                        "Abstract",
+                        "Photography",
+                        "Contemporary",
+                        "Classic"
+                )
+        );
 
-        themes.add("All");
-
-        themes.addAll(exhibitionService.getAllThemes());
-
-        themeFilter.setItems(themes);
-
-        themeFilter.setValue("All");
+        themeFilter.setValue("All themes");
     }
 
     @FXML
     private void handleSearch() {
 
-        String searchText =
+        String search =
                 searchField.getText().toLowerCase();
 
         String selectedTheme =
                 themeFilter.getValue();
 
-        ObservableList<Exhibition> filteredExhibitions =
+        ObservableList<Exhibition> filtered =
                 FXCollections.observableArrayList();
 
         for (Exhibition exhibition :
                 exhibitionService.getAllExhibitions()) {
 
-            boolean matchesSearch =
+            boolean titleMatch =
                     exhibition.getTitle_exhib()
                             .toLowerCase()
-                            .contains(searchText);
+                            .contains(search);
 
-            boolean matchesTheme =
-                    selectedTheme.equals("All")
-                    || exhibition.getTheme()
+            boolean themeMatch =
+                    selectedTheme.equals("All themes")
+                            || exhibition.getTheme()
                             .equalsIgnoreCase(selectedTheme);
 
-            if (matchesSearch && matchesTheme) {
-                filteredExhibitions.add(exhibition);
+            if (titleMatch && themeMatch) {
+                filtered.add(exhibition);
             }
         }
 
-        exhibitionTable.setItems(filteredExhibitions);
+        exhibitionTable.setItems(filtered);
     }
 
     @FXML
     private void handleReset() {
 
         searchField.clear();
-
-        themeFilter.setValue("All");
-
+        themeFilter.setValue("All themes");
         loadExhibitions();
     }
 }

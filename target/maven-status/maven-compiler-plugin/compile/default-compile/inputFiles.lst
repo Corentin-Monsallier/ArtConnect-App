@@ -61,6 +61,7 @@ C:\Users\coren\Documents\Cours\ArtConnect-App\src\main\java\com\project\artconne
 C:\Users\coren\Documents\Cours\ArtConnect-App\src\main\java\com\project\artconnect\service\WorkshopService.java
 C:\Users\coren\Documents\Cours\ArtConnect-App\src\main\java\com\project\artconnect\dao\ArtworkDao.java
 C:\Users\coren\Documents\Cours\ArtConnect-App\src\main\java\com\project\artconnect\model\Member.java
+C:\Users\coren\Documents\Cours\ArtConnect-App\src\main\java\com\project\artconnect\ui\BookingController.java
 C:\Users\coren\Documents\Cours\ArtConnect-App\src\main\java\com\project\artconnect\MainApp.java
 C:\Users\coren\Documents\Cours\ArtConnect-App\src\main\java\com\project\artconnect\persistence\JdbcExhibitionDao.java
 C:\Users\coren\Documents\Cours\ArtConnect-App\src\main\java\com\project\artconnect\persistence\JdbcCityDao.java
@@ -79,3 +80,4 @@ C:\Users\coren\Documents\Cours\ArtConnect-App\src\main\java\com\project\artconne
 C:\Users\coren\Documents\Cours\ArtConnect-App\src\main\java\com\project\artconnect\service\DisciplineService.java
 C:\Users\coren\Documents\Cours\ArtConnect-App\src\main\java\com\project\artconnect\service\impl\JdbcGalleryService.java
 C:\Users\coren\Documents\Cours\ArtConnect-App\src\main\java\com\project\artconnect\model\ArtistDiscipline.java
+C:\Users\coren\Documents\Cours\ArtConnect-App\src\main\java\com\project\artconnect\ui\ReviewController.java

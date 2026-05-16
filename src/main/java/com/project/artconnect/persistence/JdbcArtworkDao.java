@@ -1,6 +1,8 @@
 package com.project.artconnect.persistence;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,32 +18,62 @@ public class JdbcArtworkDao implements ArtworkDao {
 
         List<Artwork> artworks = new ArrayList<>();
 
-        String sql = "SELECT * FROM Artwork";
+        String sql =
+                "SELECT a.*, GROUP_CONCAT(t.name SEPARATOR ', ') AS tags " +
+                "FROM Artwork a " +
+                "LEFT JOIN Artwork_Tag at ON a.id_artwork = at.id_artwork " +
+                "LEFT JOIN Tag t ON at.id_tag = t.id_tag " +
+                "GROUP BY a.id_artwork";
 
         try (
-                Connection connection = ConnectionManager.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql);
-                ResultSet result = statement.executeQuery()) {
+                Connection conn = ConnectionManager.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()
+        ) {
 
-            while (result.next()) {
+            while (rs.next()) {
 
                 Artwork artwork = new Artwork();
 
-                artwork.setId_artwork(result.getInt("id_artwork"));
-                artwork.setTitle_art(result.getString("title_art"));
-                artwork.setCreation_year(result.getInt("creation_year"));
-                artwork.setType(result.getString("type"));
-                artwork.setMedium(result.getString("medium"));
-                artwork.setDimensions(result.getString("dimensions"));
-                artwork.setDescription(result.getString("description"));
-                artwork.setPrice(result.getDouble("price"));
-                artwork.setStatus(ArtworkStatus.valueOf(result.getString("status").toUpperCase()));
-                artwork.setId_artist(result.getInt("id_artist"));
+                artwork.setId_artwork(
+                        rs.getInt("id_artwork"));
+
+                artwork.setTitle_art(
+                        rs.getString("title_art"));
+
+                artwork.setCreation_year(
+                        rs.getInt("creation_year"));
+
+                artwork.setType(
+                        rs.getString("type"));
+
+                artwork.setMedium(
+                        rs.getString("medium"));
+
+                artwork.setDimensions(
+                        rs.getString("dimensions"));
+
+                artwork.setDescription(
+                        rs.getString("description"));
+
+                artwork.setPrice(
+                        rs.getDouble("price"));
+
+                artwork.setStatus(
+                        ArtworkStatus.valueOf(
+                                rs.getString("status")
+                                        .toUpperCase()));
+
+                artwork.setId_artist(
+                        rs.getInt("id_artist"));
+
+                artwork.setTags(
+                        rs.getString("tags"));
 
                 artworks.add(artwork);
             }
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e);
         }
 
@@ -51,26 +83,29 @@ public class JdbcArtworkDao implements ArtworkDao {
     @Override
     public void save(Artwork artwork) {
 
-        String sql = "INSERT INTO Artwork(title_art, creation_year, type, medium, dimensions, description, price, status, id_artist) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql =
+                "INSERT INTO Artwork " +
+                "(title_art, creation_year, type, medium, dimensions, description, price, status, id_artist) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (
-                Connection connection = ConnectionManager.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
+                Connection conn = ConnectionManager.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)
+        ) {
 
-            statement.setString(1, artwork.getTitle_art());
-            statement.setInt(2, artwork.getCreation_year());
-            statement.setString(3, artwork.getType());
-            statement.setString(4, artwork.getMedium());
-            statement.setString(5, artwork.getDimensions());
-            statement.setString(6, artwork.getDescription());
-            statement.setDouble(7, artwork.getPrice());
-            statement.setString(8, artwork.getStatus().name().toLowerCase());
-            statement.setInt(9, artwork.getId_artist());
+            stmt.setString(1, artwork.getTitle_art());
+            stmt.setInt(2, artwork.getCreation_year());
+            stmt.setString(3, artwork.getType());
+            stmt.setString(4, artwork.getMedium());
+            stmt.setString(5, artwork.getDimensions());
+            stmt.setString(6, artwork.getDescription());
+            stmt.setDouble(7, artwork.getPrice());
+            stmt.setString(8, artwork.getStatus().toString().toLowerCase());
+            stmt.setInt(9, artwork.getId_artist());
 
-            statement.executeUpdate();
+            stmt.executeUpdate();
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e);
         }
     }
@@ -78,27 +113,30 @@ public class JdbcArtworkDao implements ArtworkDao {
     @Override
     public void update(Artwork artwork) {
 
-        String sql = "UPDATE Artwork "
-                + "SET title_art=?, creation_year=?, type=?, medium=?, dimensions=?, description=?, price=?, status=?, id_artist=? "
-                + "WHERE id_artwork=?";
+        String sql =
+                "UPDATE Artwork SET " +
+                "title_art=?, creation_year=?, type=?, medium=?, dimensions=?, description=?, price=?, status=?, id_artist=? " +
+                "WHERE id_artwork=?";
 
         try (
-                Connection connection = ConnectionManager.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
+                Connection conn = ConnectionManager.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)
+        ) {
 
-            statement.setString(1, artwork.getTitle_art());
-            statement.setInt(2, artwork.getCreation_year());
-            statement.setString(3, artwork.getType());
-            statement.setString(4, artwork.getMedium());
-            statement.setString(5, artwork.getDimensions());
-            statement.setString(6, artwork.getDescription());
-            statement.setDouble(7, artwork.getPrice());
-            statement.setString(8, artwork.getStatus().name().toLowerCase());
-            statement.setInt(9, artwork.getId_artist());
-            statement.setInt(10, artwork.getId_artwork());
-            statement.executeUpdate();
+            stmt.setString(1, artwork.getTitle_art());
+            stmt.setInt(2, artwork.getCreation_year());
+            stmt.setString(3, artwork.getType());
+            stmt.setString(4, artwork.getMedium());
+            stmt.setString(5, artwork.getDimensions());
+            stmt.setString(6, artwork.getDescription());
+            stmt.setDouble(7, artwork.getPrice());
+            stmt.setString(8, artwork.getStatus().toString().toLowerCase());
+            stmt.setInt(9, artwork.getId_artist());
+            stmt.setInt(10, artwork.getId_artwork());
 
-        } catch (SQLException e) {
+            stmt.executeUpdate();
+
+        } catch (Exception e) {
             System.out.println(e);
         }
     }
@@ -106,17 +144,19 @@ public class JdbcArtworkDao implements ArtworkDao {
     @Override
     public void delete(int id) {
 
-        String sql = "DELETE FROM Artwork WHERE id_artwork=?";
+        String sql =
+                "DELETE FROM Artwork WHERE id_artwork=?";
 
         try (
-                Connection connection = ConnectionManager.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
+                Connection conn = ConnectionManager.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)
+        ) {
 
-            statement.setInt(1, id);
+            stmt.setInt(1, id);
 
-            statement.executeUpdate();
+            stmt.executeUpdate();
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e);
         }
     }
@@ -126,35 +166,66 @@ public class JdbcArtworkDao implements ArtworkDao {
 
         List<Artwork> artworks = new ArrayList<>();
 
-        String sql = "SELECT * FROM Artwork WHERE id_artist=?";
+        String sql =
+                "SELECT a.*, GROUP_CONCAT(t.name SEPARATOR ', ') AS tags " +
+                "FROM Artwork a " +
+                "LEFT JOIN Artwork_Tag at ON a.id_artwork = at.id_artwork " +
+                "LEFT JOIN Tag t ON at.id_tag = t.id_tag " +
+                "WHERE a.id_artist=? " +
+                "GROUP BY a.id_artwork";
 
         try (
-                Connection connection = ConnectionManager.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
+                Connection conn = ConnectionManager.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)
+        ) {
 
-            statement.setInt(1, id_artist);
+            stmt.setInt(1, id_artist);
 
-            ResultSet result = statement.executeQuery();
+            ResultSet rs = stmt.executeQuery();
 
-            while (result.next()) {
+            while (rs.next()) {
 
                 Artwork artwork = new Artwork();
 
-                artwork.setId_artwork(result.getInt("id_artwork"));
-                artwork.setTitle_art(result.getString("title_art"));
-                artwork.setCreation_year(result.getInt("creation_year"));
-                artwork.setType(result.getString("type"));
-                artwork.setMedium(result.getString("medium"));
-                artwork.setDimensions(result.getString("dimensions"));
-                artwork.setDescription(result.getString("description"));
-                artwork.setPrice(result.getDouble("price"));
-                artwork.setStatus(ArtworkStatus.valueOf(result.getString("status").toUpperCase()));
-                artwork.setId_artist(result.getInt("id_artist"));
+                artwork.setId_artwork(
+                        rs.getInt("id_artwork"));
+
+                artwork.setTitle_art(
+                        rs.getString("title_art"));
+
+                artwork.setCreation_year(
+                        rs.getInt("creation_year"));
+
+                artwork.setType(
+                        rs.getString("type"));
+
+                artwork.setMedium(
+                        rs.getString("medium"));
+
+                artwork.setDimensions(
+                        rs.getString("dimensions"));
+
+                artwork.setDescription(
+                        rs.getString("description"));
+
+                artwork.setPrice(
+                        rs.getDouble("price"));
+
+                artwork.setStatus(
+                        ArtworkStatus.valueOf(
+                                rs.getString("status")
+                                        .toUpperCase()));
+
+                artwork.setId_artist(
+                        rs.getInt("id_artist"));
+
+                artwork.setTags(
+                        rs.getString("tags"));
 
                 artworks.add(artwork);
             }
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e);
         }
 

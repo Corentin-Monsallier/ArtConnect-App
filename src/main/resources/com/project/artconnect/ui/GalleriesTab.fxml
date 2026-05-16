@@ -35,21 +35,53 @@
 
         <columns>
 
+            <TableColumn fx:id="idColumn"
+                         text="Gallery ID"
+                         prefWidth="90" />
+
             <TableColumn fx:id="nameColumn"
                          text="Gallery"
-                         prefWidth="220" />
+                         prefWidth="180" />
 
             <TableColumn fx:id="ratingColumn"
                          text="Rating"
-                         prefWidth="100" />
+                         prefWidth="80" />
 
             <TableColumn fx:id="websiteColumn"
                          text="Website"
-                         prefWidth="250" />
+                         prefWidth="220" />
 
-            <TableColumn fx:id="addressColumn"
+            <TableColumn fx:id="addressIdColumn"
                          text="Address ID"
-                         prefWidth="120" />
+                         prefWidth="100" />
+
+            <TableColumn fx:id="numberColumn"
+                         text="Number"
+                         prefWidth="80" />
+
+            <TableColumn fx:id="streetColumn"
+                         text="Street"
+                         prefWidth="180" />
+
+            <TableColumn fx:id="cityIdColumn"
+                         text="City ID"
+                         prefWidth="80" />
+
+            <TableColumn fx:id="cityColumn"
+                         text="City"
+                         prefWidth="140" />
+
+            <TableColumn fx:id="codeColumn"
+                         text="Code"
+                         prefWidth="90" />
+
+            <TableColumn fx:id="countryColumn"
+                         text="Country"
+                         prefWidth="130" />
+
+            <TableColumn fx:id="hoursColumn"
+                         text="Opening Hours"
+                         prefWidth="320" />
 
         </columns>
 

@@ -44,6 +44,7 @@ com\project\artconnect\service\GalleryService.class
 com\project\artconnect\dao\ArtistSocialDao.class
 com\project\artconnect\service\impl\JdbcArtistService.class
 com\project\artconnect\MainApp.class
+com\project\artconnect\ui\ReviewController.class
 com\project\artconnect\service\impl\JdbcArtworkService.class
 com\project\artconnect\model\Artist.class
 com\project\artconnect\service\ExhibitionService.class
@@ -60,6 +61,7 @@ com\project\artconnect\ui\WorkshopController.class
 com\project\artconnect\service\BookingService.class
 com\project\artconnect\dao\CityDao.class
 com\project\artconnect\model\Exhibition.class
+com\project\artconnect\ui\BookingController.class
 com\project\artconnect\model\Member.class
 com\project\artconnect\service\impl\JdbcDisciplineService.class
 com\project\artconnect\service\impl\JdbcWorkshopService.class

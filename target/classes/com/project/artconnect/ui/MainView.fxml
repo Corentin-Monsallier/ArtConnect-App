@@ -36,6 +36,12 @@
         <Tab text="Community">
             <fx:include source="CommunityTab.fxml"/>
         </Tab>
+        <Tab text="Review">
+            <fx:include source="ReviewTab.fxml"/>
+        </Tab>
+        <Tab text="Bookings">
+            <fx:include source="BookingsTab.fxml"/>
+        </Tab>
     </TabPane>
     
     <HBox alignment="CENTER_RIGHT" prefHeight="30.0" style="-fx-background-color: #f0f0f0;">

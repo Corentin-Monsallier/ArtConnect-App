@@ -1,6 +1,7 @@
 package com.project.artconnect.model;
 
 public class Artwork {
+
     private int id_artwork;
     private String title_art;
     private int creation_year;
@@ -11,13 +12,24 @@ public class Artwork {
     private Double price;
     private ArtworkStatus status;
     private int id_artist;
+    private String tags;
 
-    // constructors
-    public Artwork() {}
+    public Artwork() {
+    }
 
-    public Artwork(int id_artwork, String title_art, int creation_year, String type,
-                   String medium, String dimensions, String description,
-                   Double price, ArtworkStatus status, int id_artist) {
+    public Artwork(
+            int id_artwork,
+            String title_art,
+            int creation_year,
+            String type,
+            String medium,
+            String dimensions,
+            String description,
+            Double price,
+            ArtworkStatus status,
+            int id_artist,
+            String tags) {
+
         this.id_artwork = id_artwork;
         this.title_art = title_art;
         this.creation_year = creation_year;
@@ -28,42 +40,99 @@ public class Artwork {
         this.price = price;
         this.status = status;
         this.id_artist = id_artist;
+        this.tags = tags;
     }
 
-    // getters and setters
-    public int getId_artwork() { return id_artwork; }
-    public void setId_artwork(int id_artwork) { this.id_artwork = id_artwork; }
+    public int getId_artwork() {
+        return id_artwork;
+    }
 
-    public String getTitle_art() { return title_art; }
-    public void setTitle_art(String title_art) { this.title_art = title_art; }
+    public void setId_artwork(int id_artwork) {
+        this.id_artwork = id_artwork;
+    }
 
-    public int getCreation_year() { return creation_year; }
-    public void setCreation_year(int creation_year) { this.creation_year = creation_year; }
+    public String getTitle_art() {
+        return title_art;
+    }
 
-    public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
+    public void setTitle_art(String title_art) {
+        this.title_art = title_art;
+    }
 
-    public String getMedium() { return medium; }
-    public void setMedium(String medium) { this.medium = medium; }
+    public int getCreation_year() {
+        return creation_year;
+    }
 
-    public String getDimensions() { return dimensions; }
-    public void setDimensions(String dimensions) { this.dimensions = dimensions; }
+    public void setCreation_year(int creation_year) {
+        this.creation_year = creation_year;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public String getType() {
+        return type;
+    }
 
-    public Double getPrice() { return price; }
-    public void setPrice(Double price) { this.price = price; }
+    public void setType(String type) {
+        this.type = type;
+    }
 
-    public ArtworkStatus getStatus() { return status; }
-    public void setStatus(ArtworkStatus status) { this.status = status; }
+    public String getMedium() {
+        return medium;
+    }
 
-    public int getId_artist() { return id_artist; }
-    public void setId_artist(int id_artist) { this.id_artist = id_artist; }
+    public void setMedium(String medium) {
+        this.medium = medium;
+    }
 
-    // toString method
+    public String getDimensions() {
+        return dimensions;
+    }
+
+    public void setDimensions(String dimensions) {
+        this.dimensions = dimensions;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public ArtworkStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ArtworkStatus status) {
+        this.status = status;
+    }
+
+    public int getId_artist() {
+        return id_artist;
+    }
+
+    public void setId_artist(int id_artist) {
+        this.id_artist = id_artist;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
+
     @Override
     public String toString() {
-        return "Artwork{id=" + id_artwork + ", title=" + title_art + ", status=" + status + "}";
+        return title_art;
     }
 }
