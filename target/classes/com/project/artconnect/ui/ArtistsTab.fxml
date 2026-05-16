@@ -79,6 +79,9 @@
             <TableColumn fx:id="socialsColumn"
                          text="Socials"
                          prefWidth="320" />
+            <TableColumn fx:id="disciplinesColumn"
+                        text="Disciplines"
+                        prefWidth="200"/>
         </columns>
 
     </TableView>

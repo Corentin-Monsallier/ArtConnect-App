@@ -5,8 +5,10 @@ import java.util.stream.Collectors;
 
 import com.project.artconnect.model.Artist;
 import com.project.artconnect.model.ArtistSocial;
+import com.project.artconnect.model.Discipline;
 import com.project.artconnect.service.ArtistService;
 import com.project.artconnect.service.ArtistSocialService;
+import com.project.artconnect.service.DisciplineService;
 import com.project.artconnect.util.ServiceProvider;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -58,6 +60,9 @@ public class ArtistController {
     private TableColumn<Artist, String> socialsColumn;
 
     @FXML
+    private TableColumn<Artist, String> disciplinesColumn;
+
+    @FXML
     private TextField searchField;
 
     @FXML
@@ -68,6 +73,9 @@ public class ArtistController {
 
     private final ArtistSocialService artistSocialService =
             ServiceProvider.getArtistSocialService();
+
+    private final DisciplineService disciplineService =
+            ServiceProvider.getDisciplineService();
 
     @FXML
     public void initialize() {
@@ -104,10 +112,14 @@ public class ArtistController {
 
         socialsColumn.setCellValueFactory(cellData -> {
             Artist artist = cellData.getValue();
+            return new SimpleStringProperty(
+                    getSocialsText(artist.getId_artist()));
+        });
 
-            String socials = getSocialsText(artist.getId_artist());
-
-            return new SimpleStringProperty(socials);
+        disciplinesColumn.setCellValueFactory(cellData -> {
+            Artist artist = cellData.getValue();
+            return new SimpleStringProperty(
+                    getDisciplinesText(artist.getId_artist()));
         });
 
         activeFilter.setItems(FXCollections.observableArrayList(
@@ -149,6 +161,20 @@ public class ArtistController {
                 .collect(Collectors.joining(" | "));
     }
 
+    private String getDisciplinesText(int idArtist) {
+
+        List<Discipline> disciplines =
+                disciplineService.getDisciplinesByArtistId(idArtist);
+
+        if (disciplines == null || disciplines.isEmpty()) {
+            return "";
+        }
+
+        return disciplines.stream()
+                .map(Discipline::getName_discipline)
+                .collect(Collectors.joining(" | "));
+    }
+
     private String safeString(String value) {
 
         if (value == null) {
@@ -179,6 +205,9 @@ public class ArtistController {
             String socialsText =
                     getSocialsText(artist.getId_artist()).toLowerCase();
 
+            String disciplinesText =
+                    getDisciplinesText(artist.getId_artist()).toLowerCase();
+
             boolean matchesSearch =
                     String.valueOf(artist.getId_artist()).contains(searchText)
                     || String.valueOf(artist.getId_user()).contains(searchText)
@@ -189,7 +218,8 @@ public class ArtistController {
                     || safeString(artist.getPhone()).toLowerCase().contains(searchText)
                     || safeString(artist.getBio()).toLowerCase().contains(searchText)
                     || safeString(artist.getWebsite_artist()).toLowerCase().contains(searchText)
-                    || socialsText.contains(searchText);
+                    || socialsText.contains(searchText)
+                    || disciplinesText.contains(searchText);
 
             boolean matchesActive = true;
 

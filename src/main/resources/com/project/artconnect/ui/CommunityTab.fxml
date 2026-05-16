@@ -24,7 +24,7 @@
 
         <ComboBox fx:id="membershipFilter"
                   promptText="Membership"
-                  prefWidth="160" />
+                  prefWidth="180" />
 
         <Button text="Search"
                 onAction="#handleSearch" />
@@ -38,6 +38,7 @@
                VBox.vgrow="ALWAYS">
 
         <columns>
+
             <TableColumn fx:id="memberIdColumn"
                          text="Member ID"
                          prefWidth="90" />
@@ -70,6 +71,9 @@
                          text="Membership"
                          prefWidth="150" />
 
+            <TableColumn fx:id="disciplinesColumn"
+                         text="Disciplines"
+                         prefWidth="220" />
 
         </columns>
 
