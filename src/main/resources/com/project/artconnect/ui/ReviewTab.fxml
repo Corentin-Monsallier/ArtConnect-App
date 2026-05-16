@@ -10,55 +10,30 @@
       fx:controller="com.project.artconnect.ui.ReviewController">
 
     <padding>
-        <Insets bottom="10.0"
-                left="10.0"
-                right="10.0"
-                top="10.0"/>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
     </padding>
 
     <HBox spacing="10.0" alignment="CENTER_LEFT">
-
-        <TextField fx:id="searchField"
-                   promptText="Search reviews..."
-                   HBox.hgrow="ALWAYS"/>
-
-        <ComboBox fx:id="ratingFilter"
-                  promptText="Rating"/>
-
-        <Button text="Search"
-                onAction="#handleSearch"/>
-
-        <Button text="Reset"
-                onAction="#handleReset"/>
-
+        <TextField fx:id="searchField" promptText="Search reviews..." HBox.hgrow="ALWAYS"/>
+        <ComboBox fx:id="ratingFilter" promptText="Rating" prefWidth="120"/>
+        <Button text="Search" onAction="#handleSearch"/>
+        <Button text="Reset" onAction="#handleReset"/>
     </HBox>
 
     <TableView fx:id="reviewTable" VBox.vgrow="ALWAYS">
-
         <columns>
-
-            <TableColumn fx:id="memberColumn"
-                         text="Member ID"
-                         prefWidth="100"/>
-
-            <TableColumn fx:id="artworkColumn"
-                         text="Artwork ID"
-                         prefWidth="100"/>
-
-            <TableColumn fx:id="ratingColumn"
-                         text="Rating"
-                         prefWidth="80"/>
-
-            <TableColumn fx:id="commentColumn"
-                         text="Comment"
-                         prefWidth="350"/>
-
-            <TableColumn fx:id="dateColumn"
-                         text="Review Date"
-                         prefWidth="180"/>
-
+            <TableColumn fx:id="memberColumn" text="Member ID" prefWidth="100"/>
+            <TableColumn fx:id="artworkColumn" text="Artwork ID" prefWidth="100"/>
+            <TableColumn fx:id="ratingColumn" text="Rating" prefWidth="80"/>
+            <TableColumn fx:id="commentColumn" text="Comment" prefWidth="300"/>
+            <TableColumn fx:id="dateColumn" text="Date" prefWidth="160"/>
         </columns>
-
     </TableView>
+
+    <HBox spacing="10.0">
+        <Button text="Add Review" onAction="#handleAdd" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+        <Button text="Edit Review" onAction="#handleEdit" style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+        <Button text="Delete Review" onAction="#handleDelete" style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
+    </HBox>
 
 </VBox>

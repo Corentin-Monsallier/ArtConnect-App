@@ -10,81 +10,36 @@
       fx:controller="com.project.artconnect.ui.GalleryController">
 
     <padding>
-        <Insets bottom="10.0"
-                left="10.0"
-                right="10.0"
-                top="10.0" />
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
     </padding>
 
     <HBox spacing="10.0" alignment="CENTER_LEFT">
-
-        <TextField fx:id="searchField"
-                   promptText="Search galleries..."
-                   HBox.hgrow="ALWAYS" />
-
-        <Button text="Search"
-                onAction="#handleSearch" />
-
-        <Button text="Reset"
-                onAction="#handleReset" />
-
+        <TextField fx:id="searchField" promptText="Search galleries..." HBox.hgrow="ALWAYS"/>
+        <Button text="Search" onAction="#handleSearch"/>
+        <Button text="Reset" onAction="#handleReset"/>
     </HBox>
 
-    <TableView fx:id="galleryTable"
-               VBox.vgrow="ALWAYS">
-
+    <TableView fx:id="galleryTable" VBox.vgrow="ALWAYS">
         <columns>
-
-            <TableColumn fx:id="idColumn"
-                         text="Gallery ID"
-                         prefWidth="90" />
-
-            <TableColumn fx:id="nameColumn"
-                         text="Gallery"
-                         prefWidth="180" />
-
-            <TableColumn fx:id="ratingColumn"
-                         text="Rating"
-                         prefWidth="80" />
-
-            <TableColumn fx:id="websiteColumn"
-                         text="Website"
-                         prefWidth="220" />
-
-            <TableColumn fx:id="addressIdColumn"
-                         text="Address ID"
-                         prefWidth="100" />
-
-            <TableColumn fx:id="numberColumn"
-                         text="Number"
-                         prefWidth="80" />
-
-            <TableColumn fx:id="streetColumn"
-                         text="Street"
-                         prefWidth="180" />
-
-            <TableColumn fx:id="cityIdColumn"
-                         text="City ID"
-                         prefWidth="80" />
-
-            <TableColumn fx:id="cityColumn"
-                         text="City"
-                         prefWidth="140" />
-
-            <TableColumn fx:id="codeColumn"
-                         text="Code"
-                         prefWidth="90" />
-
-            <TableColumn fx:id="countryColumn"
-                         text="Country"
-                         prefWidth="130" />
-
-            <TableColumn fx:id="hoursColumn"
-                         text="Opening Hours"
-                         prefWidth="320" />
-
+            <TableColumn fx:id="idColumn" text="ID" prefWidth="60"/>
+            <TableColumn fx:id="nameColumn" text="Name" prefWidth="180"/>
+            <TableColumn fx:id="ratingColumn" text="Rating" prefWidth="80"/>
+            <TableColumn fx:id="websiteColumn" text="Website" prefWidth="200"/>
+            <TableColumn fx:id="addressIdColumn" text="Addr ID" prefWidth="70"/>
+            <TableColumn fx:id="numberColumn" text="Number" prefWidth="80"/>
+            <TableColumn fx:id="streetColumn" text="Street" prefWidth="150"/>
+            <TableColumn fx:id="cityIdColumn" text="City ID" prefWidth="70"/>
+            <TableColumn fx:id="cityColumn" text="City" prefWidth="120"/>
+            <TableColumn fx:id="codeColumn" text="Code" prefWidth="80"/>
+            <TableColumn fx:id="countryColumn" text="Country" prefWidth="100"/>
+            <TableColumn fx:id="hoursColumn" text="Hours" prefWidth="250"/>
         </columns>
-
     </TableView>
+
+    <HBox spacing="10.0">
+        <Button text="Add Gallery" onAction="#handleAdd" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+        <Button text="Edit Gallery" onAction="#handleEdit" style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+        <Button text="Delete Gallery" onAction="#handleDelete" style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
+    </HBox>
 
 </VBox>

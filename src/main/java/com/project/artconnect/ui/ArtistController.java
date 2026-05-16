@@ -15,238 +15,160 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.geometry.Insets;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBox;
 
 public class ArtistController {
 
-    @FXML
-    private TableView<Artist> artistTable;
+    @FXML private TableView<Artist> artistTable;
+    @FXML private TableColumn<Artist, Integer> idArtistColumn;
+    @FXML private TableColumn<Artist, Integer> idUserColumn;
+    @FXML private TableColumn<Artist, String> nameColumn;
+    @FXML private TableColumn<Artist, String> cityColumn;
+    @FXML private TableColumn<Artist, String> emailColumn;
+    @FXML private TableColumn<Artist, Integer> yearColumn;
+    @FXML private TableColumn<Artist, String> phoneColumn;
+    @FXML private TableColumn<Artist, String> bioColumn;
+    @FXML private TableColumn<Artist, String> websiteColumn;
+    @FXML private TableColumn<Artist, Boolean> activeColumn;
+    @FXML private TableColumn<Artist, String> socialsColumn;
+    @FXML private TableColumn<Artist, String> disciplinesColumn;
+    @FXML private TextField searchField;
+    @FXML private ComboBox<String> activeFilter;
 
-    @FXML
-    private TableColumn<Artist, Integer> idArtistColumn;
-
-    @FXML
-    private TableColumn<Artist, Integer> idUserColumn;
-
-    @FXML
-    private TableColumn<Artist, String> nameColumn;
-
-    @FXML
-    private TableColumn<Artist, String> cityColumn;
-
-    @FXML
-    private TableColumn<Artist, String> emailColumn;
-
-    @FXML
-    private TableColumn<Artist, Integer> yearColumn;
-
-    @FXML
-    private TableColumn<Artist, String> phoneColumn;
-
-    @FXML
-    private TableColumn<Artist, String> bioColumn;
-
-    @FXML
-    private TableColumn<Artist, String> websiteColumn;
-
-    @FXML
-    private TableColumn<Artist, Boolean> activeColumn;
-
-    @FXML
-    private TableColumn<Artist, String> socialsColumn;
-
-    @FXML
-    private TableColumn<Artist, String> disciplinesColumn;
-
-    @FXML
-    private TextField searchField;
-
-    @FXML
-    private ComboBox<String> activeFilter;
-
-    private final ArtistService artistService =
-            ServiceProvider.getArtistService();
-
-    private final ArtistSocialService artistSocialService =
-            ServiceProvider.getArtistSocialService();
-
-    private final DisciplineService disciplineService =
-            ServiceProvider.getDisciplineService();
+    private final ArtistService artistService = ServiceProvider.getArtistService();
+    private final ArtistSocialService artistSocialService = ServiceProvider.getArtistSocialService();
+    private final DisciplineService disciplineService = ServiceProvider.getDisciplineService();
 
     @FXML
     public void initialize() {
-
-        idArtistColumn.setCellValueFactory(
-                new PropertyValueFactory<>("id_artist"));
-
-        idUserColumn.setCellValueFactory(
-                new PropertyValueFactory<>("id_user"));
-
-        nameColumn.setCellValueFactory(
-                new PropertyValueFactory<>("name_user"));
-
-        cityColumn.setCellValueFactory(
-                new PropertyValueFactory<>("city"));
-
-        emailColumn.setCellValueFactory(
-                new PropertyValueFactory<>("email"));
-
-        yearColumn.setCellValueFactory(
-                new PropertyValueFactory<>("birth_year"));
-
-        phoneColumn.setCellValueFactory(
-                new PropertyValueFactory<>("phone"));
-
-        bioColumn.setCellValueFactory(
-                new PropertyValueFactory<>("bio"));
-
-        websiteColumn.setCellValueFactory(
-                new PropertyValueFactory<>("website_artist"));
-
-        activeColumn.setCellValueFactory(
-                new PropertyValueFactory<>("is_active"));
-
-        socialsColumn.setCellValueFactory(cellData -> {
-            Artist artist = cellData.getValue();
-            return new SimpleStringProperty(
-                    getSocialsText(artist.getId_artist()));
-        });
-
-        disciplinesColumn.setCellValueFactory(cellData -> {
-            Artist artist = cellData.getValue();
-            return new SimpleStringProperty(
-                    getDisciplinesText(artist.getId_artist()));
-        });
-
-        activeFilter.setItems(FXCollections.observableArrayList(
-                "All activity",
-                "true",
-                "false"
-        ));
-
+        idArtistColumn.setCellValueFactory(new PropertyValueFactory<>("id_artist"));
+        idUserColumn.setCellValueFactory(new PropertyValueFactory<>("id_user"));
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name_user"));
+        cityColumn.setCellValueFactory(new PropertyValueFactory<>("city"));
+        emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
+        yearColumn.setCellValueFactory(new PropertyValueFactory<>("birth_year"));
+        phoneColumn.setCellValueFactory(new PropertyValueFactory<>("phone"));
+        bioColumn.setCellValueFactory(new PropertyValueFactory<>("bio"));
+        websiteColumn.setCellValueFactory(new PropertyValueFactory<>("website_artist"));
+        activeColumn.setCellValueFactory(new PropertyValueFactory<>("is_active"));
+        socialsColumn.setCellValueFactory(c -> new SimpleStringProperty(socials(c.getValue().getId_artist())));
+        disciplinesColumn.setCellValueFactory(c -> new SimpleStringProperty(disciplines(c.getValue().getId_artist())));
+        activeFilter.setItems(FXCollections.observableArrayList("All activity", "true", "false"));
         activeFilter.setValue("All activity");
-
-        activeFilter.setOnAction(event -> handleSearch());
-
+        activeFilter.setOnAction(e -> handleSearch());
         loadArtists();
     }
 
     private void loadArtists() {
-
-        ObservableList<Artist> artists =
-                FXCollections.observableArrayList(
-                        artistService.getAllArtists());
-
-        artistTable.setItems(artists);
+        artistTable.setItems(FXCollections.observableArrayList(artistService.getAllArtists()));
     }
 
-    private String getSocialsText(int idArtist) {
-
-        List<ArtistSocial> socials =
-                artistSocialService.getArtistSocialsByArtistId(idArtist);
-
-        if (socials == null || socials.isEmpty()) {
-            return "";
-        }
-
-        return socials.stream()
-                .map(social ->
-                        safeString(social.getPlatform())
-                                + ": "
-                                + safeString(social.getLink()))
-                .collect(Collectors.joining(" | "));
+    private String socials(int id) {
+        List<ArtistSocial> s = artistSocialService.getArtistSocialsByArtistId(id);
+        if (s == null || s.isEmpty()) return "";
+        return s.stream().map(x -> safe(x.getPlatform()) + ": " + safe(x.getLink())).collect(Collectors.joining(" | "));
     }
 
-    private String getDisciplinesText(int idArtist) {
-
-        List<Discipline> disciplines =
-                disciplineService.getDisciplinesByArtistId(idArtist);
-
-        if (disciplines == null || disciplines.isEmpty()) {
-            return "";
-        }
-
-        return disciplines.stream()
-                .map(Discipline::getName_discipline)
-                .collect(Collectors.joining(" | "));
+    private String disciplines(int id) {
+        List<Discipline> d = disciplineService.getDisciplinesByArtistId(id);
+        if (d == null || d.isEmpty()) return "";
+        return d.stream().map(Discipline::getName_discipline).collect(Collectors.joining(" | "));
     }
 
-    private String safeString(String value) {
+    private String safe(String v) { return v == null ? "" : v; }
 
-        if (value == null) {
-            return "";
+    @FXML private void handleSearch() {
+        String txt = searchField.getText() == null ? "" : searchField.getText().toLowerCase();
+        String av = activeFilter.getValue();
+        ObservableList<Artist> filtered = FXCollections.observableArrayList();
+        for (Artist a : artistService.getAllArtists()) {
+            boolean ms = safe(a.getName_user()).toLowerCase().contains(txt)
+                    || safe(a.getCity()).toLowerCase().contains(txt)
+                    || safe(a.getEmail()).toLowerCase().contains(txt)
+                    || safe(a.getBio()).toLowerCase().contains(txt)
+                    || socials(a.getId_artist()).toLowerCase().contains(txt)
+                    || disciplines(a.getId_artist()).toLowerCase().contains(txt);
+            boolean ma = av == null || av.equals("All activity") || a.isIs_active() == Boolean.parseBoolean(av);
+            if (ms && ma) filtered.add(a);
         }
-
-        return value;
+        artistTable.setItems(filtered);
     }
 
-    @FXML
-    private void handleSearch() {
+    @FXML private void handleReset() { searchField.clear(); activeFilter.setValue("All activity"); loadArtists(); }
 
-        String searchText = searchField.getText();
+    @FXML private void handleAdd() {
+        buildDialog(null).showAndWait().ifPresent(a -> { artistService.createArtist(a); loadArtists(); });
+    }
 
-        if (searchText == null) {
-            searchText = "";
-        }
+    @FXML private void handleEdit() {
+        Artist sel = artistTable.getSelectionModel().getSelectedItem();
+        if (sel == null) { warn("Please select an artist to edit."); return; }
+        buildDialog(sel).showAndWait().ifPresent(a -> { artistService.updateArtist(a); loadArtists(); });
+    }
 
-        searchText = searchText.toLowerCase();
+    @FXML private void handleDelete() {
+        Artist sel = artistTable.getSelectionModel().getSelectedItem();
+        if (sel == null) { warn("Please select an artist to delete."); return; }
+        new Alert(Alert.AlertType.CONFIRMATION,
+                "Delete artist \"" + sel.getName_user() + "\"?", ButtonType.YES, ButtonType.NO)
+                .showAndWait().ifPresent(btn -> {
+                    if (btn == ButtonType.YES) {
+                        try { artistService.deleteArtist(sel.getId_artist()); loadArtists(); }
+                        catch (Exception e) { warn("Cannot delete: " + e.getMessage()); }
+                    }
+                });
+    }
 
-        String activeValue = activeFilter.getValue();
+    private Dialog<Artist> buildDialog(Artist existing) {
+        Dialog<Artist> dialog = new Dialog<>();
+        dialog.setTitle(existing == null ? "Add Artist" : "Edit Artist");
+        ButtonType saveBtn = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(saveBtn, ButtonType.CANCEL);
 
-        ObservableList<Artist> filteredArtists =
-                FXCollections.observableArrayList();
+        TextField nameF    = new TextField(existing != null ? safe(existing.getName_user()) : "");
+        TextField emailF   = new TextField(existing != null ? safe(existing.getEmail()) : "");
+        TextField yearF    = new TextField(existing != null ? String.valueOf(existing.getBirth_year()) : "");
+        TextField phoneF   = new TextField(existing != null ? safe(existing.getPhone()) : "");
+        TextField cityF    = new TextField(existing != null ? safe(existing.getCity()) : "");
+        TextField bioF     = new TextField(existing != null ? safe(existing.getBio()) : "");
+        TextField websiteF = new TextField(existing != null ? safe(existing.getWebsite_artist()) : "");
+        CheckBox activeF   = new CheckBox("Active");
+        if (existing != null) activeF.setSelected(existing.isIs_active());
 
-        for (Artist artist : artistService.getAllArtists()) {
+        VBox box = new VBox(8,
+                new Label("Name:"), nameF,
+                new Label("Email:"), emailF,
+                new Label("Birth Year:"), yearF,
+                new Label("Phone:"), phoneF,
+                new Label("City:"), cityF,
+                new Label("Bio:"), bioF,
+                new Label("Website:"), websiteF,
+                activeF
+        );
+        box.setPadding(new Insets(10));
+        dialog.getDialogPane().setContent(box);
+        dialog.getDialogPane().setPrefWidth(420);
 
-            String socialsText =
-                    getSocialsText(artist.getId_artist()).toLowerCase();
-
-            String disciplinesText =
-                    getDisciplinesText(artist.getId_artist()).toLowerCase();
-
-            boolean matchesSearch =
-                    String.valueOf(artist.getId_artist()).contains(searchText)
-                    || String.valueOf(artist.getId_user()).contains(searchText)
-                    || safeString(artist.getName_user()).toLowerCase().contains(searchText)
-                    || safeString(artist.getCity()).toLowerCase().contains(searchText)
-                    || safeString(artist.getEmail()).toLowerCase().contains(searchText)
-                    || String.valueOf(artist.getBirth_year()).contains(searchText)
-                    || safeString(artist.getPhone()).toLowerCase().contains(searchText)
-                    || safeString(artist.getBio()).toLowerCase().contains(searchText)
-                    || safeString(artist.getWebsite_artist()).toLowerCase().contains(searchText)
-                    || socialsText.contains(searchText)
-                    || disciplinesText.contains(searchText);
-
-            boolean matchesActive = true;
-
-            if (activeValue != null && !activeValue.equals("All activity")) {
-
-                boolean selectedActive =
-                        Boolean.parseBoolean(activeValue);
-
-                matchesActive =
-                        artist.isIs_active() == selectedActive;
+        dialog.setResultConverter(btn -> {
+            if (btn == saveBtn) {
+                Artist a = existing != null ? existing : new Artist();
+                a.setName_user(nameF.getText());
+                a.setEmail(emailF.getText());
+                try { a.setBirth_year(Integer.parseInt(yearF.getText())); } catch (NumberFormatException ignored) {}
+                a.setPhone(phoneF.getText());
+                a.setCity(cityF.getText());
+                a.setBio(bioF.getText());
+                a.setWebsite_artist(websiteF.getText());
+                a.setIs_active(activeF.isSelected());
+                return a;
             }
-
-            if (matchesSearch && matchesActive) {
-                filteredArtists.add(artist);
-            }
-        }
-
-        artistTable.setItems(filteredArtists);
+            return null;
+        });
+        return dialog;
     }
 
-    @FXML
-    private void handleReset() {
-
-        searchField.clear();
-
-        activeFilter.setValue("All activity");
-
-        loadArtists();
-    }
+    private void warn(String msg) { new Alert(Alert.AlertType.WARNING, msg, ButtonType.OK).showAndWait(); }
 }
