@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="12" alignment="CENTER"
+      xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.project.artconnect.ui.RegisterController"
+      style="-fx-background-color: #f5f5f5;">
+
+    <padding><Insets top="40" bottom="40" left="100" right="100"/></padding>
+
+    <Label text="Create your ArtConnect account"
+           style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #2196F3;"/>
+    <Label text="You will be registered as a Member."
+           style="-fx-font-size: 12; -fx-text-fill: #666;"/>
+
+    <VBox spacing="8" maxWidth="360">
+        <Label text="Full Name"/>
+        <TextField fx:id="nameField" promptText="Your name" maxWidth="360"/>
+
+        <Label text="Email"/>
+        <TextField fx:id="emailField" promptText="Your email" maxWidth="360"/>
+
+        <Label text="Password"/>
+        <PasswordField fx:id="passwordField" promptText="Choose a password" maxWidth="360"/>
+
+        <Label text="Birth Year"/>
+        <TextField fx:id="birthYearField" promptText="e.g. 1990" maxWidth="360"/>
+
+        <Label text="Phone"/>
+        <TextField fx:id="phoneField" promptText="Optional" maxWidth="360"/>
+
+        <Label text="City"/>
+        <TextField fx:id="cityField" promptText="Optional" maxWidth="360"/>
+
+        <Label text="Membership Type"/>
+        <ComboBox fx:id="membershipCombo" maxWidth="360"/>
+
+        <Label fx:id="errorLabel" style="-fx-text-fill: red; -fx-font-size: 12;" text=""/>
+
+        <Button text="Create Account" onAction="#handleRegister" maxWidth="360"
+                style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14; -fx-padding: 10;"/>
+
+        <Button text="← Back to Login" onAction="#handleBack" maxWidth="360"
+                style="-fx-background-color: transparent; -fx-text-fill: #888; -fx-border-color: #ccc; -fx-padding: 6;"/>
+    </VBox>
+</VBox>

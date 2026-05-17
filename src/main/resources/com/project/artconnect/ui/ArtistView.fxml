@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.project.artconnect.ui.ArtistViewController">
+
+    <HBox style="-fx-background-color: #9C27B0; -fx-padding: 10;" alignment="CENTER_LEFT" spacing="10">
+        <Label text="ArtConnect" style="-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: bold;"/>
+        <Label fx:id="welcomeLabel" style="-fx-text-fill: #f3e5f5; -fx-font-size: 13;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label fx:id="roleLabel" style="-fx-text-fill: white; -fx-background-color: #7B1FA2; -fx-padding: 3 8; -fx-background-radius: 4;"/>
+        <Button text="Logout" onAction="#handleLogout"
+                style="-fx-background-color: white; -fx-text-fill: #9C27B0; -fx-font-weight: bold;"/>
+    </HBox>
+
+    <TabPane VBox.vgrow="ALWAYS" tabClosingPolicy="UNAVAILABLE">
+
+        <!-- MY ARTWORKS + avg price + reviews -->
+        <Tab text="My Artworks">
+            <VBox spacing="10">
+                <padding><Insets top="10" left="10" right="10" bottom="10"/></padding>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <TextField fx:id="artworkSearch" promptText="Search by title..." HBox.hgrow="ALWAYS"/>
+                    <ComboBox fx:id="artworkStatusFilter" promptText="Filter by status" prefWidth="150"/>
+                    <Button text="Search" onAction="#handleArtworkSearch"/>
+                    <Button text="Reset" onAction="#handleArtworkReset"/>
+                </HBox>
+                <TableView fx:id="myArtworkTable" VBox.vgrow="ALWAYS" prefHeight="220">
+                    <columns>
+                        <TableColumn fx:id="aArtTitleCol" text="Title" prefWidth="180"/>
+                        <TableColumn fx:id="aArtTypeCol" text="Type" prefWidth="100"/>
+                        <TableColumn fx:id="aArtMediumCol" text="Medium" prefWidth="100"/>
+                        <TableColumn fx:id="aArtPriceCol" text="Price" prefWidth="90"/>
+                        <TableColumn fx:id="aArtStatusCol" text="Status" prefWidth="100"/>
+                        <TableColumn fx:id="aArtYearCol" text="Year" prefWidth="80"/>
+                    </columns>
+                </TableView>
+                <HBox spacing="10">
+                    <Button text="Add Artwork" onAction="#handleAddArtwork" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+                    <Button text="Edit Selected" onAction="#handleEditArtwork" style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+                    <Button text="Delete Selected" onAction="#handleDeleteArtwork" style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
+                </HBox>
+                <Label fx:id="avgPriceLabel" style="-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #555;" text=""/>
+                <Separator/>
+                <Label text="Reviews on my artworks" style="-fx-font-size: 13; -fx-font-weight: bold;"/>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <TextField fx:id="reviewSearch" promptText="Search by artwork or comment..." HBox.hgrow="ALWAYS"/>
+                    <Button text="Search" onAction="#handleReviewSearch"/>
+                    <Button text="Reset" onAction="#handleReviewReset"/>
+                </HBox>
+                <TableView fx:id="myReviewTable" VBox.vgrow="ALWAYS" prefHeight="180">
+                    <columns>
+                        <TableColumn fx:id="aRvArtworkCol" text="Artwork" prefWidth="180"/>
+                        <TableColumn fx:id="aRvRatingCol" text="Rating" prefWidth="80"/>
+                        <TableColumn fx:id="aRvCommentCol" text="Comment" prefWidth="300"/>
+                        <TableColumn fx:id="aRvDateCol" text="Date" prefWidth="130"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+
+        <!-- MY WORKSHOPS + participants + availability -->
+        <Tab text="My Workshops">
+            <VBox spacing="10">
+                <padding><Insets top="10" left="10" right="10" bottom="10"/></padding>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <TextField fx:id="workshopSearch" promptText="Search by title or location..." HBox.hgrow="ALWAYS"/>
+                    <Button text="Search" onAction="#handleWorkshopSearch"/>
+                    <Button text="Reset" onAction="#handleWorkshopReset"/>
+                </HBox>
+                <TableView fx:id="myWorkshopTable" VBox.vgrow="ALWAYS" prefHeight="200">
+                    <columns>
+                        <TableColumn fx:id="aWsTitleCol" text="Title" prefWidth="170"/>
+                        <TableColumn fx:id="aWsDateCol" text="Date" prefWidth="130"/>
+                        <TableColumn fx:id="aWsLevelCol" text="Level" prefWidth="90"/>
+                        <TableColumn fx:id="aWsPriceCol" text="Price" prefWidth="80"/>
+                        <TableColumn fx:id="aWsMaxCol" text="Max" prefWidth="60"/>
+                        <TableColumn fx:id="aWsSpotsCol" text="Spots Left" prefWidth="90"/>
+                        <TableColumn fx:id="aWsAvailCol" text="Status" prefWidth="90"/>
+                        <TableColumn fx:id="aWsLocationCol" text="Location" prefWidth="120"/>
+                    </columns>
+                </TableView>
+                <HBox spacing="10">
+                    <Button text="Create Workshop" onAction="#handleAddWorkshop" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+                    <Button text="Edit Selected" onAction="#handleEditWorkshop" style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+                    <Button text="Delete Selected" onAction="#handleDeleteWorkshop" style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
+                </HBox>
+                <Separator/>
+                <Label text="Participants for selected workshop" style="-fx-font-size: 13; -fx-font-weight: bold;"/>
+                <TableView fx:id="participantTable" VBox.vgrow="ALWAYS" prefHeight="180">
+                    <columns>
+                        <TableColumn fx:id="aPtNameCol" text="Participant" prefWidth="200"/>
+                        <TableColumn fx:id="aPtStatusCol" text="Payment Status" prefWidth="150"/>
+                        <TableColumn fx:id="aPtDateCol" text="Booking Date" prefWidth="160"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+
+        <!-- MY STATS -->
+        <Tab text="My Stats">
+            <VBox spacing="15">
+                <padding><Insets top="20" left="30" right="30" bottom="20"/></padding>
+                <Label text="My Activity" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+                <Label fx:id="statWorkshopCount" style="-fx-font-size: 14;" text=""/>
+                <Label fx:id="statAvgPrice" style="-fx-font-size: 14;" text=""/>
+                <Label fx:id="statArtworkCount" style="-fx-font-size: 14;" text=""/>
+                <Separator/>
+                <Label text="Exhibitions I participated in" style="-fx-font-size: 14; -fx-font-weight: bold;"/>
+                <TableView fx:id="myExhibitionTable" prefHeight="200">
+                    <columns>
+                        <TableColumn fx:id="aExTitleCol" text="Exhibition" prefWidth="200"/>
+                        <TableColumn fx:id="aExArtworkCountCol" text="My Artworks" prefWidth="120"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+
+        <!-- MY PROFILE -->
+        <Tab text="My Profile">
+            <ScrollPane fitToWidth="true">
+                <VBox spacing="10">
+                    <padding><Insets top="20" left="30" right="30" bottom="20"/></padding>
+                    <Label text="Edit Your Profile" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+                    <Label text="Name:"/> <TextField fx:id="profileName" maxWidth="400"/>
+                    <Label text="Email:"/> <TextField fx:id="profileEmail" maxWidth="400"/>
+                    <Label text="Phone:"/> <TextField fx:id="profilePhone" maxWidth="400"/>
+                    <Label text="City:"/> <TextField fx:id="profileCity" maxWidth="400"/>
+                    <Label text="Bio:"/> <TextArea fx:id="profileBio" prefRowCount="3" maxWidth="400"/>
+                    <Label text="Website:"/> <TextField fx:id="profileWebsite" maxWidth="400"/>
+                    <CheckBox fx:id="profileActive" text="Active"/>
+                    <Label fx:id="profileMsg" text="" style="-fx-font-size: 12;"/>
+                    <Button text="Save Profile" onAction="#handleSaveProfile"
+                            style="-fx-background-color: #9C27B0; -fx-text-fill: white; -fx-padding: 8 20;"/>
+                    <Separator/>
+                    <Label text="My Social Networks" style="-fx-font-size: 14; -fx-font-weight: bold;"/>
+                    <TableView fx:id="socialTable" prefHeight="150">
+                        <columns>
+                            <TableColumn fx:id="aSocialPlatformCol" text="Platform" prefWidth="150"/>
+                            <TableColumn fx:id="aSocialLinkCol" text="Link" prefWidth="300"/>
+                        </columns>
+                    </TableView>
+                    <HBox spacing="10">
+                        <Button text="Add Social" onAction="#handleAddSocial" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+                        <Button text="Delete Selected" onAction="#handleDeleteSocial" style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
+                    </HBox>
+                </VBox>
+            </ScrollPane>
+        </Tab>
+
+    </TabPane>
+
+    <HBox style="-fx-background-color: #f5f5f5; -fx-padding: 6;" alignment="CENTER_RIGHT">
+        <Label text="Artist Dashboard" style="-fx-text-fill: #888;"/>
+    </HBox>
+</VBox>

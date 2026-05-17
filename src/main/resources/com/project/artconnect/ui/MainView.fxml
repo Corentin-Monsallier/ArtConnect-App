@@ -4,16 +4,21 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<VBox prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.project.artconnect.ui.MainController">
-    <MenuBar>
-        <Menu text="File">
-            <MenuItem text="Exit" onAction="#handleExit"/>
-        </Menu>
-        <Menu text="Help">
-            <MenuItem text="About"/>
-        </Menu>
-    </MenuBar>
-    
+<VBox prefHeight="800.0" prefWidth="1200.0"
+      xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.project.artconnect.ui.MainController">
+
+    <!-- Admin top bar -->
+    <HBox style="-fx-background-color: #1565C0; -fx-padding: 8;" alignment="CENTER_LEFT" spacing="10">
+        <Label text="ArtConnect Pro – Admin Panel"
+               style="-fx-text-fill: white; -fx-font-size: 15; -fx-font-weight: bold;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label fx:id="adminLabel" style="-fx-text-fill: #bbdefb; -fx-font-size: 12;"/>
+        <Button text="Logout" onAction="#handleLogout"
+                style="-fx-background-color: white; -fx-text-fill: #1565C0;"/>
+    </HBox>
+
     <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
         <Tab text="Discover">
             <fx:include source="DiscoverTab.fxml"/>
@@ -43,11 +48,9 @@
             <fx:include source="BookingsTab.fxml"/>
         </Tab>
     </TabPane>
-    
+
     <HBox alignment="CENTER_RIGHT" prefHeight="30.0" style="-fx-background-color: #f0f0f0;">
-        <padding>
-            <Insets right="10.0" left="10.0"/>
-        </padding>
-        <Label text="ArtConnect Pro v1.0 | Mode: In-Memory"/>
+        <padding><Insets right="10.0" left="10.0"/></padding>
+        <Label text="ArtConnect Pro v1.0 | Admin Mode"/>
     </HBox>
 </VBox>

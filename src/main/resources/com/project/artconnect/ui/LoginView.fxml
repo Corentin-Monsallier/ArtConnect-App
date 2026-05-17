@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="16" alignment="CENTER"
+      xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.project.artconnect.ui.LoginController"
+      style="-fx-background-color: #f5f5f5;">
+
+    <padding><Insets top="60" bottom="60" left="120" right="120"/></padding>
+
+    <Label text="ArtConnect" style="-fx-font-size: 32; -fx-font-weight: bold; -fx-text-fill: #2196F3;"/>
+    <Label text="Sign in to your account" style="-fx-font-size: 13; -fx-text-fill: #666;"/>
+
+    <VBox spacing="8" maxWidth="320">
+        <Label text="Email"/>
+        <TextField fx:id="emailField" promptText="Enter your email" maxWidth="320"/>
+
+        <Label text="Password"/>
+        <PasswordField fx:id="passwordField" promptText="Enter your password" maxWidth="320"/>
+
+        <Label fx:id="errorLabel" style="-fx-text-fill: red; -fx-font-size: 12;" text=""/>
+
+        <Button text="Login" onAction="#handleLogin" maxWidth="320"
+                style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 14; -fx-padding: 10;"/>
+
+        <Separator/>
+
+        <HBox alignment="CENTER" spacing="6">
+            <Label text="No account?" style="-fx-text-fill: #666;"/>
+            <Hyperlink text="Register here" onAction="#handleGoToRegister"/>
+        </HBox>
+
+        <Button text="← Browse without account" onAction="#handleBrowseAsGuest" maxWidth="320"
+                style="-fx-background-color: transparent; -fx-text-fill: #888; -fx-border-color: #ccc; -fx-padding: 6;"/>
+    </VBox>
+</VBox>

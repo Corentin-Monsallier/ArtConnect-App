@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.project.artconnect.ui.ViewerController">
+
+    <HBox style="-fx-background-color: #2196F3; -fx-padding: 10;" alignment="CENTER_LEFT" spacing="10">
+        <Label text="ArtConnect" style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold;"/>
+        <Label text="– Local Art Community" style="-fx-text-fill: #e3f2fd; -fx-font-size: 13;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Login" onAction="#handleLogin"
+                style="-fx-background-color: white; -fx-text-fill: #2196F3; -fx-font-weight: bold;"/>
+        <Button text="Register" onAction="#handleRegister"
+                style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;"/>
+    </HBox>
+
+    <TabPane VBox.vgrow="ALWAYS" tabClosingPolicy="UNAVAILABLE">
+
+        <!-- DISCOVER -->
+        <Tab text="Discover">
+            <ScrollPane fitToWidth="true">
+                <FlowPane fx:id="discoverPane" hgap="15" vgap="15">
+                    <padding><Insets top="15" left="15"/></padding>
+                </FlowPane>
+            </ScrollPane>
+        </Tab>
+
+        <!-- ARTWORKS -->
+        <Tab text="Artworks">
+            <VBox spacing="10">
+                <padding><Insets top="10" left="10" right="10" bottom="10"/></padding>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <TextField fx:id="artworkSearch" promptText="Search by title or artist..." HBox.hgrow="ALWAYS"/>
+                    <ComboBox fx:id="artworkStatusFilter" promptText="Filter by status" prefWidth="150"/>
+                    <ComboBox fx:id="artworkTypeFilter" promptText="Filter by type" prefWidth="140"/>
+                    <ComboBox fx:id="artworkMediumFilter" promptText="Filter by medium" prefWidth="150"/>
+                    <ComboBox fx:id="artworkDisciplineFilter" promptText="Filter by discipline" prefWidth="160"/>
+                    <Button text="Search" onAction="#handleArtworkSearch"/>
+                    <Button text="Reset" onAction="#handleArtworkReset"/>
+                </HBox>
+                <TableView fx:id="artworkTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="vArtTitleCol" text="Title" prefWidth="160"/>
+                        <TableColumn fx:id="vArtArtistCol" text="Artist" prefWidth="140"/>
+                        <TableColumn fx:id="vArtTypeCol" text="Type" prefWidth="90"/>
+                        <TableColumn fx:id="vArtMediumCol" text="Medium" prefWidth="90"/>
+                        <TableColumn fx:id="vArtYearCol" text="Year" prefWidth="65"/>
+                        <TableColumn fx:id="vArtPriceCol" text="Price" prefWidth="80"/>
+                        <TableColumn fx:id="vArtStatusCol" text="Status" prefWidth="90"/>
+                    </columns>
+                </TableView>
+                <Label text="Login or register to purchase artworks."
+                       style="-fx-text-fill: #888; -fx-font-style: italic;"/>
+            </VBox>
+        </Tab>
+
+        <!-- REVIEWS -->
+        <Tab text="Reviews">
+            <VBox spacing="10">
+                <padding><Insets top="10" left="10" right="10" bottom="10"/></padding>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <TextField fx:id="reviewSearch" promptText="Search by artwork or reviewer..." HBox.hgrow="ALWAYS"/>
+                    <ComboBox fx:id="reviewRatingFilter" promptText="Filter by rating" prefWidth="150"/>
+                    <Button text="Search" onAction="#handleReviewSearch"/>
+                    <Button text="Reset" onAction="#handleReviewReset"/>
+                </HBox>
+                <TableView fx:id="reviewTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="vRvArtworkCol" text="Artwork" prefWidth="180"/>
+                        <TableColumn fx:id="vRvRatingCol" text="Rating" prefWidth="80"/>
+                        <TableColumn fx:id="vRvCommentCol" text="Comment" prefWidth="280"/>
+                        <TableColumn fx:id="vRvReviewerCol" text="Reviewer" prefWidth="150"/>
+                        <TableColumn fx:id="vRvDateCol" text="Date" prefWidth="130"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+
+        <!-- EXHIBITIONS -->
+        <Tab text="Exhibitions">
+            <VBox spacing="10">
+                <padding><Insets top="10" left="10" right="10" bottom="10"/></padding>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <TextField fx:id="exhibitionSearch" promptText="Search by title or theme..." HBox.hgrow="ALWAYS"/>
+                    <ComboBox fx:id="exhibitionGalleryFilter" promptText="Filter by gallery" prefWidth="180"/>
+                    <Button text="Search" onAction="#handleExhibitionSearch"/>
+                    <Button text="Reset" onAction="#handleExhibitionReset"/>
+                </HBox>
+                <TableView fx:id="exhibitionTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="vExTitleCol" text="Title" prefWidth="180"/>
+                        <TableColumn fx:id="vExGalleryCol" text="Gallery" prefWidth="160"/>
+                        <TableColumn fx:id="vExThemeCol" text="Theme" prefWidth="130"/>
+                        <TableColumn fx:id="vExStartCol" text="Start" prefWidth="110"/>
+                        <TableColumn fx:id="vExEndCol" text="End" prefWidth="110"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+
+        <!-- WORKSHOPS -->
+        <Tab text="Workshops">
+            <VBox spacing="10">
+                <padding><Insets top="10" left="10" right="10" bottom="10"/></padding>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <TextField fx:id="workshopSearch" promptText="Search by title or location..." HBox.hgrow="ALWAYS"/>
+                    <ComboBox fx:id="workshopAvailFilter" promptText="Filter by availability" prefWidth="170"/>
+                    <Button text="Search" onAction="#handleWorkshopSearch"/>
+                    <Button text="Reset" onAction="#handleWorkshopReset"/>
+                </HBox>
+                <TableView fx:id="workshopTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="vWsTitleCol" text="Title" prefWidth="170"/>
+                        <TableColumn fx:id="vWsInstructorCol" text="Instructor" prefWidth="140"/>
+                        <TableColumn fx:id="vWsDateCol" text="Date" prefWidth="130"/>
+                        <TableColumn fx:id="vWsLevelCol" text="Level" prefWidth="90"/>
+                        <TableColumn fx:id="vWsPriceCol" text="Price" prefWidth="80"/>
+                        <TableColumn fx:id="vWsLocationCol" text="Location" prefWidth="110"/>
+                        <TableColumn fx:id="vWsSpotsCol" text="Spots Left" prefWidth="90"/>
+                        <TableColumn fx:id="vWsAvailCol" text="Availability" prefWidth="100"/>
+                    </columns>
+                </TableView>
+                <Label text="Login or register to book a workshop."
+                       style="-fx-text-fill: #888; -fx-font-style: italic;"/>
+            </VBox>
+        </Tab>
+
+        <!-- GALLERIES -->
+        <Tab text="Galleries">
+            <VBox spacing="10">
+                <padding><Insets top="10" left="10" right="10" bottom="10"/></padding>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <TextField fx:id="gallerySearch" promptText="Search by name or city..." HBox.hgrow="ALWAYS"/>
+                    <Button text="Search" onAction="#handleGallerySearch"/>
+                    <Button text="Reset" onAction="#handleGalleryReset"/>
+                </HBox>
+                <TableView fx:id="galleryTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="vGalNameCol" text="Name" prefWidth="180"/>
+                        <TableColumn fx:id="vGalCityCol" text="City" prefWidth="120"/>
+                        <TableColumn fx:id="vGalRatingCol" text="Rating" prefWidth="80"/>
+                        <TableColumn fx:id="vGalWebCol" text="Website" prefWidth="200"/>
+                        <TableColumn fx:id="vGalHoursCol" text="Hours" prefWidth="280"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+
+    </TabPane>
+
+    <HBox style="-fx-background-color: #f5f5f5; -fx-padding: 6;" alignment="CENTER_RIGHT">
+        <Label text="ArtConnect – Browsing as Guest" style="-fx-text-fill: #999;"/>
+    </HBox>
+</VBox>

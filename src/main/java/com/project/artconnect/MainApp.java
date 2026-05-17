@@ -6,11 +6,13 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class MainApp extends Application {
+
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/project/artconnect/ui/MainView.fxml"));
+        FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/com/project/artconnect/ui/ViewerView.fxml"));
         Scene scene = new Scene(loader.load(), 1200, 800);
-        stage.setTitle("ArtConnect Pro - Local Art Community Platform");
+        stage.setTitle("ArtConnect – Browse");
         stage.setScene(scene);
         stage.show();
     }

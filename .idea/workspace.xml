@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="cc93d245-4bf7-41ff-8c6b-0d6ba0e11f28" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/project/artconnect/config/DatabaseConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/project/artconnect/config/DatabaseConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/config/DatabaseConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/config/DatabaseConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/Address.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/Address.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/Artist.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/Artist.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/ArtistDiscipline.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/ArtistDiscipline.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/ArtistSocial.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/ArtistSocial.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/ArtworkStatus.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/ArtworkStatus.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/ArtworkTag.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/ArtworkTag.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/Booking.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/Booking.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/City.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/City.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/Discipline.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/Discipline.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/Exhibition.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/Exhibition.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/ExhibitionArtwork.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/ExhibitionArtwork.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/Gallery.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/Gallery.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/GalleryHours.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/GalleryHours.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/Member.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/Member.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/MemberDiscipline.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/MemberDiscipline.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/MembershipType.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/MembershipType.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/PaymentStatusType.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/PaymentStatusType.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/Review.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/Review.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/User.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/User.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/Workshop.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/model/Workshop.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/service/impl/JdbcArtistService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/service/impl/JdbcArtistService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/service/impl/JdbcArtworkService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/service/impl/JdbcArtworkService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/service/impl/JdbcExhibitionService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/service/impl/JdbcExhibitionService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/service/impl/JdbcGalleryService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/service/impl/JdbcGalleryService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/service/impl/JdbcMemberService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/service/impl/JdbcMemberService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/service/impl/JdbcWorkshopService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/service/impl/JdbcWorkshopService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/ui/ArtistController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/ui/ArtistController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/ui/ArtworkController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/ui/ArtworkController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/ui/CommunityController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/ui/CommunityController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/ui/DiscoverController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/ui/DiscoverController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/ui/ExhibitionController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/ui/ExhibitionController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/ui/GalleryController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/ui/GalleryController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/project/artconnect/ui/WorkshopController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/project/artconnect/ui/WorkshopController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 3
+}</component>
+  <component name="ProjectId" id="3Dopv0SAscn3hQAsqPMoANyt7XM" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "to.speed.mode.migration.done": "true"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="artconnect-pro" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="artconnect-pro" />
+      <option name="filePath" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+      <module name="artconnect-pro" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="RUN_TOOL" value="" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="Tox" factoryName="Tox">
+      <module name="artconnect-pro" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="RUN_TOOL" value="" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.33514.17" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="cc93d245-4bf7-41ff-8c6b-0d6ba0e11f28" name="Changes" comment="" />
+      <created>1778958506965</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1778958506965</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
