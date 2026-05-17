@@ -1,13 +1,20 @@
 package com.project.artconnect.ui;
 
+import javafx.event.ActionEvent;
+import javafx.scene.Node;
+
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 import com.project.artconnect.model.Exhibition;
 import com.project.artconnect.model.Gallery;
 import com.project.artconnect.service.ExhibitionService;
 import com.project.artconnect.service.GalleryService;
 import com.project.artconnect.util.ServiceProvider;
+import com.project.artconnect.util.ViewHelper;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -31,6 +38,13 @@ public class ExhibitionController {
     @FXML private TextField searchField;
     @FXML private ComboBox<String> themeFilter;
 
+    // Artworks in selected exhibition
+    @FXML private TableView<Map<String, String>> exhibitionArtworkTable;
+    @FXML private TableColumn<Map<String, String>, String> eExArtTitleCol;
+    @FXML private TableColumn<Map<String, String>, String> eExArtArtistCol;
+    @FXML private TableColumn<Map<String, String>, String> eExArtTypeCol;
+    @FXML private TableColumn<Map<String, String>, String> eExArtStatusCol;
+
     private final ExhibitionService exhibitionService = ServiceProvider.getExhibitionService();
     private final GalleryService galleryService = ServiceProvider.getGalleryService();
 
@@ -47,6 +61,25 @@ public class ExhibitionController {
         loadExhibitions();
         loadThemes();
         themeFilter.setOnAction(e -> handleSearch());
+
+        // Artworks in selected exhibition
+        if (exhibitionArtworkTable != null) {
+            eExArtTitleCol.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getOrDefault("title_art", "")));
+            eExArtArtistCol.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getOrDefault("artist_name", "")));
+            eExArtTypeCol.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getOrDefault("type", "")));
+            eExArtStatusCol.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getOrDefault("status", "")));
+            exhibitionTable.getSelectionModel().selectedItemProperty().addListener((obs, old, sel) -> {
+                if (sel == null) { exhibitionArtworkTable.getItems().clear(); return; }
+                exhibitionArtworkTable.setItems(FXCollections.observableArrayList(ViewHelper.query(
+                        "SELECT a.title_art, u.name_user AS artist_name, a.type, a.status " +
+                                "FROM Exhibition_Artwork ea " +
+                                "JOIN Artwork a ON ea.id_artwork = a.id_artwork " +
+                                "JOIN Artist ar ON a.id_artist = ar.id_artist " +
+                                "JOIN User_ u ON ar.id_user = u.id_user " +
+                                "WHERE ea.id_exhibition=? ORDER BY a.title_art",
+                        sel.getId_exhibition())));
+            });
+        }
     }
 
     private void loadExhibitions() {
@@ -100,6 +133,7 @@ public class ExhibitionController {
     private Dialog<Exhibition> buildDialog(Exhibition existing) {
         Dialog<Exhibition> dialog = new Dialog<>();
         dialog.setTitle(existing == null ? "Add Exhibition" : "Edit Exhibition");
+
         ButtonType saveBtn = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(saveBtn, ButtonType.CANCEL);
 
@@ -110,15 +144,28 @@ public class ExhibitionController {
         TextField themeF   = new TextField(existing != null ? existing.getTheme() : "");
         TextField descF    = new TextField(existing != null ? existing.getDescription() : "");
 
+        Label errorLabel = new Label();
+        errorLabel.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
+
         ObservableList<Gallery> galleries = FXCollections.observableArrayList(galleryService.getAllGalleries());
         ComboBox<Gallery> galleryF = new ComboBox<>(galleries);
         galleryF.setConverter(new StringConverter<>() {
-            public String toString(Gallery g) { return g == null ? "" : "#" + g.getId_gallery() + " – " + g.getName_gallery(); }
-            public Gallery fromString(String s) { return null; }
+            public String toString(Gallery g) {
+                return g == null ? "" : "#" + g.getId_gallery() + " – " + g.getName_gallery();
+            }
+
+            public Gallery fromString(String s) {
+                return null;
+            }
         });
         galleryF.setMaxWidth(Double.MAX_VALUE);
-        if (existing != null)
-            galleries.stream().filter(g -> g.getId_gallery() == existing.getId_gallery()).findFirst().ifPresent(galleryF::setValue);
+
+        if (existing != null) {
+            galleries.stream()
+                    .filter(g -> g.getId_gallery() == existing.getId_gallery())
+                    .findFirst()
+                    .ifPresent(galleryF::setValue);
+        }
 
         VBox box = new VBox(8,
                 new Label("Title:"), titleF,
@@ -127,15 +174,38 @@ public class ExhibitionController {
                 new Label("End Date:"), endF,
                 new Label("Theme:"), themeF,
                 new Label("Description:"), descF,
-                new Label("Gallery:"), galleryF
+                new Label("Gallery:"), galleryF,
+                errorLabel
         );
+
         box.setPadding(new Insets(10));
         dialog.getDialogPane().setContent(box);
         dialog.getDialogPane().setPrefWidth(460);
 
+        Node saveButton = dialog.getDialogPane().lookupButton(saveBtn);
+        saveButton.addEventFilter(ActionEvent.ACTION, event -> {
+            errorLabel.setText("");
+
+            if (galleryF.getValue() == null) {
+                errorLabel.setText("Please select a gallery.");
+                event.consume();
+                return;
+            }
+
+            if (startF.getValue() == null || endF.getValue() == null) {
+                errorLabel.setText("Please select both start date and end date.");
+                event.consume();
+                return;
+            }
+
+            if (endF.getValue().isBefore(startF.getValue())) {
+                errorLabel.setText("Invalid dates: end date must be after start date.");
+                event.consume();
+            }
+        });
+
         dialog.setResultConverter(btn -> {
             if (btn == saveBtn) {
-                if (galleryF.getValue() == null) { warn("Please select a gallery."); return null; }
                 Exhibition e = existing != null ? existing : new Exhibition();
                 e.setTitle_exhib(titleF.getText());
                 e.setCurator_name(curatorF.getText());
@@ -148,6 +218,7 @@ public class ExhibitionController {
             }
             return null;
         });
+
         return dialog;
     }
 

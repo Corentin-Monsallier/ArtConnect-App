@@ -90,13 +90,22 @@
                     <Button text="Search" onAction="#handleExhibitionSearch"/>
                     <Button text="Reset" onAction="#handleExhibitionReset"/>
                 </HBox>
-                <TableView fx:id="exhibitionTable" VBox.vgrow="ALWAYS">
+                <TableView fx:id="exhibitionTable" prefHeight="220">
                     <columns>
                         <TableColumn fx:id="vExTitleCol" text="Title" prefWidth="180"/>
                         <TableColumn fx:id="vExGalleryCol" text="Gallery" prefWidth="160"/>
                         <TableColumn fx:id="vExThemeCol" text="Theme" prefWidth="130"/>
                         <TableColumn fx:id="vExStartCol" text="Start" prefWidth="110"/>
                         <TableColumn fx:id="vExEndCol" text="End" prefWidth="110"/>
+                    </columns>
+                </TableView>
+                <Label text="Artworks in selected exhibition:" style="-fx-font-weight: bold;"/>
+                <TableView fx:id="exhibitionArtworkTable" VBox.vgrow="ALWAYS" prefHeight="160">
+                    <columns>
+                        <TableColumn fx:id="vExArtTitleCol" text="Title" prefWidth="200"/>
+                        <TableColumn fx:id="vExArtArtistCol" text="Artist" prefWidth="160"/>
+                        <TableColumn fx:id="vExArtTypeCol" text="Type" prefWidth="110"/>
+                        <TableColumn fx:id="vExArtStatusCol" text="Status" prefWidth="100"/>
                     </columns>
                 </TableView>
             </VBox>
@@ -145,6 +154,30 @@
                         <TableColumn fx:id="vGalRatingCol" text="Rating" prefWidth="80"/>
                         <TableColumn fx:id="vGalWebCol" text="Website" prefWidth="200"/>
                         <TableColumn fx:id="vGalHoursCol" text="Hours" prefWidth="280"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </Tab>
+
+        <!-- ARTISTS -->
+        <Tab text="Artists">
+            <VBox spacing="10">
+                <padding><Insets top="10" left="10" right="10" bottom="10"/></padding>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <TextField fx:id="artistSearch" promptText="Search by name, city or discipline..." HBox.hgrow="ALWAYS"/>
+                    <Button text="Search" onAction="#handleArtistSearch"/>
+                    <Button text="Reset" onAction="#handleArtistReset"/>
+                </HBox>
+                <TableView fx:id="artistTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="vArtistNameCol" text="Name" prefWidth="140"/>
+                        <TableColumn fx:id="vArtistCityCol" text="City" prefWidth="100"/>
+                        <TableColumn fx:id="vArtistEmailCol" text="Email" prefWidth="170"/>
+                        <TableColumn fx:id="vArtistBirthCol" text="Birth Year" prefWidth="80"/>
+                        <TableColumn fx:id="vArtistBioCol" text="Bio" prefWidth="200"/>
+                        <TableColumn fx:id="vArtistWebCol" text="Website" prefWidth="160"/>
+                        <TableColumn fx:id="vArtistSocialCol" text="Socials" prefWidth="220"/>
+                        <TableColumn fx:id="vArtistDisciplineCol" text="Disciplines" prefWidth="160"/>
                     </columns>
                 </TableView>
             </VBox>

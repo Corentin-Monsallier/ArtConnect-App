@@ -76,11 +76,31 @@ public class ViewerController {
     @FXML private TableColumn<Map<String, String>, String> vGalHoursCol;
     @FXML private TextField gallerySearch;
 
+    // Artists
+    @FXML private TableView<Map<String, String>> artistTable;
+    @FXML private TableColumn<Map<String, String>, String> vArtistNameCol;
+    @FXML private TableColumn<Map<String, String>, String> vArtistCityCol;
+    @FXML private TableColumn<Map<String, String>, String> vArtistEmailCol;
+    @FXML private TableColumn<Map<String, String>, String> vArtistBirthCol;
+    @FXML private TableColumn<Map<String, String>, String> vArtistBioCol;
+    @FXML private TableColumn<Map<String, String>, String> vArtistWebCol;
+    @FXML private TableColumn<Map<String, String>, String> vArtistSocialCol;
+    @FXML private TableColumn<Map<String, String>, String> vArtistDisciplineCol;
+    @FXML private TextField artistSearch;
+
+    // Exhibition artworks panel
+    @FXML private TableView<Map<String, String>> exhibitionArtworkTable;
+    @FXML private TableColumn<Map<String, String>, String> vExArtTitleCol;
+    @FXML private TableColumn<Map<String, String>, String> vExArtArtistCol;
+    @FXML private TableColumn<Map<String, String>, String> vExArtTypeCol;
+    @FXML private TableColumn<Map<String, String>, String> vExArtStatusCol;
+
     private List<Map<String, String>> allArtworks;
     private List<Map<String, String>> allReviews;
     private List<Map<String, String>> allExhibitions;
     private List<Map<String, String>> allWorkshops;
     private List<Map<String, String>> allGalleries;
+    private List<Map<String, String>> allArtists;
 
     @FXML
     public void initialize() {
@@ -90,9 +110,10 @@ public class ViewerController {
         setupExhibitions();
         setupWorkshops();
         setupGalleries();
+        setupArtists();
     }
 
-    //  Artworks 
+    //  Artworks
     private static final String ARTWORK_SQL =
             "SELECT a.id_artwork, a.title_art, u.name_user AS artist_name, a.type, a.medium, " +
                     "a.creation_year, a.price, a.status, a.id_artist " +
@@ -178,7 +199,7 @@ public class ViewerController {
         artworkTable.setItems(FXCollections.observableArrayList(allArtworks));
     }
 
-    //  Reviews 
+    //  Reviews
     private void setupReviews() {
         vRvArtworkCol.setCellValueFactory(c -> col(c, "title_art"));
         vRvRatingCol.setCellValueFactory(c -> col(c, "rating"));
@@ -213,7 +234,7 @@ public class ViewerController {
         reviewTable.setItems(FXCollections.observableArrayList(allReviews));
     }
 
-    //  Exhibitions 
+    //  Exhibitions
     private static final String EXHIB_SQL =
             "SELECT e.title_exhib, g.name_gallery, e.theme, e.start_date, e.end_date " +
                     "FROM Exhibition e JOIN Gallery g ON e.id_gallery = g.id_gallery ORDER BY e.start_date";
@@ -233,6 +254,26 @@ public class ViewerController {
 
         allExhibitions = ViewHelper.query(EXHIB_SQL);
         exhibitionTable.setItems(FXCollections.observableArrayList(allExhibitions));
+
+        // Artworks in selected exhibition
+        if (exhibitionArtworkTable != null) {
+            vExArtTitleCol.setCellValueFactory(c -> col(c, "title_art"));
+            vExArtArtistCol.setCellValueFactory(c -> col(c, "artist_name"));
+            vExArtTypeCol.setCellValueFactory(c -> col(c, "type"));
+            vExArtStatusCol.setCellValueFactory(c -> col(c, "status"));
+            exhibitionTable.getSelectionModel().selectedItemProperty().addListener((obs, old, sel) -> {
+                if (sel == null) { exhibitionArtworkTable.getItems().clear(); return; }
+                String title = sel.getOrDefault("title_exhib", "");
+                exhibitionArtworkTable.setItems(FXCollections.observableArrayList(ViewHelper.query(
+                        "SELECT a.title_art, u.name_user AS artist_name, a.type, a.status " +
+                                "FROM Exhibition_Artwork ea " +
+                                "JOIN Artwork a ON ea.id_artwork = a.id_artwork " +
+                                "JOIN Artist ar ON a.id_artist = ar.id_artist " +
+                                "JOIN User_ u ON ar.id_user = u.id_user " +
+                                "JOIN Exhibition e ON ea.id_exhibition = e.id_exhibition " +
+                                "WHERE e.title_exhib=? ORDER BY a.title_art", title)));
+            });
+        }
     }
 
     @FXML private void handleExhibitionSearch() {
@@ -253,7 +294,7 @@ public class ViewerController {
         exhibitionTable.setItems(FXCollections.observableArrayList(allExhibitions));
     }
 
-    //  Workshops 
+    //  Workshops
     private static final String WS_SQL =
             "SELECT w.id_workshop, w.title_workshop, u.name_user AS instructor, w.date_workshop, " +
                     "w.level, w.price, w.location, v.remaining_spots, v.availability_status " +
@@ -299,7 +340,7 @@ public class ViewerController {
         workshopTable.setItems(FXCollections.observableArrayList(allWorkshops));
     }
 
-    //  Galleries 
+    //  Galleries
     private static final String GAL_SQL =
             "SELECT g.name_gallery, ci.city, g.rating, g.website_gallery, " +
                     "GROUP_CONCAT(CONCAT(gh.day_of_week,': ',gh.open_time,'-',gh.close_time) " +
@@ -334,6 +375,48 @@ public class ViewerController {
     @FXML private void handleGalleryReset() {
         gallerySearch.clear();
         galleryTable.setItems(FXCollections.observableArrayList(allGalleries));
+    }
+
+    //  Artists
+    private static final String ARTIST_SQL =
+            "SELECT u.name_user, u.city, u.email, u.birth_year, ar.bio, ar.website_artist, " +
+                    "GROUP_CONCAT(DISTINCT d.name_discipline ORDER BY d.name_discipline SEPARATOR ', ') AS disciplines, " +
+                    "GROUP_CONCAT(DISTINCT CONCAT(s.platform,': ',s.link) ORDER BY s.platform SEPARATOR ' | ') AS socials " +
+                    "FROM Artist ar " +
+                    "JOIN User_ u ON ar.id_user = u.id_user " +
+                    "LEFT JOIN Artist_Discipline ad ON ar.id_artist = ad.id_artist " +
+                    "LEFT JOIN Discipline d ON ad.id_discipline = d.id_discipline " +
+                    "LEFT JOIN Artist_Social s ON ar.id_artist = s.id_artist " +
+                    "WHERE ar.is_active = TRUE " +
+                    "GROUP BY ar.id_artist, u.name_user, u.city, u.email, u.birth_year, ar.bio, ar.website_artist " +
+                    "ORDER BY u.name_user";
+
+    private void setupArtists() {
+        vArtistNameCol.setCellValueFactory(c -> col(c, "name_user"));
+        vArtistCityCol.setCellValueFactory(c -> col(c, "city"));
+        vArtistEmailCol.setCellValueFactory(c -> col(c, "email"));
+        vArtistBirthCol.setCellValueFactory(c -> col(c, "birth_year"));
+        vArtistBioCol.setCellValueFactory(c -> col(c, "bio"));
+        vArtistWebCol.setCellValueFactory(c -> col(c, "website_artist"));
+        vArtistSocialCol.setCellValueFactory(c -> col(c, "socials"));
+        vArtistDisciplineCol.setCellValueFactory(c -> col(c, "disciplines"));
+        allArtists = ViewHelper.query(ARTIST_SQL);
+        artistTable.setItems(FXCollections.observableArrayList(allArtists));
+    }
+
+    @FXML private void handleArtistSearch() {
+        String txt = artistSearch.getText().toLowerCase();
+        ObservableList<Map<String, String>> f = FXCollections.observableArrayList();
+        for (Map<String, String> row : allArtists)
+            if (row.getOrDefault("name_user","").toLowerCase().contains(txt)
+                    || row.getOrDefault("city","").toLowerCase().contains(txt)
+                    || row.getOrDefault("disciplines","").toLowerCase().contains(txt)) f.add(row);
+        artistTable.setItems(f);
+    }
+
+    @FXML private void handleArtistReset() {
+        artistSearch.clear();
+        artistTable.setItems(FXCollections.observableArrayList(allArtists));
     }
 
     //  Navigation 

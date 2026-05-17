@@ -5,18 +5,21 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import com.project.artconnect.model.Artwork;
+import com.project.artconnect.model.ArtworkStatus;
 import com.project.artconnect.model.Booking;
 import com.project.artconnect.model.Exhibition;
-import com.project.artconnect.model.Gallery;
 import com.project.artconnect.model.Member;
 import com.project.artconnect.model.PaymentStatusType;
 import com.project.artconnect.model.Review;
 import com.project.artconnect.model.Workshop;
 import com.project.artconnect.persistence.JdbcBookingDao;
 import com.project.artconnect.service.*;
+import com.project.artconnect.util.ConnectionManager;
 import com.project.artconnect.util.ServiceProvider;
 import com.project.artconnect.util.SessionManager;
+import com.project.artconnect.util.ViewHelper;
 
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -31,16 +34,19 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Map;
+
 public class UserDashboardController {
 
-    // Top bar
     @FXML private Label welcomeLabel;
     @FXML private Label roleLabel;
 
-    // Discover
     @FXML private FlowPane discoverPane;
 
-    // Artworks
     @FXML private TableView<Artwork> artworkTable;
     @FXML private TableColumn<Artwork, Integer> artIdCol;
     @FXML private TableColumn<Artwork, String> artTitleCol;
@@ -52,7 +58,6 @@ public class UserDashboardController {
     @FXML private TextField artworkSearch;
     @FXML private TextField workshopSearch;
 
-    // Workshops
     @FXML private TableView<Workshop> workshopTable;
     @FXML private TableColumn<Workshop, Integer> wsIdCol;
     @FXML private TableColumn<Workshop, String> wsTitleCol;
@@ -62,26 +67,29 @@ public class UserDashboardController {
     @FXML private TableColumn<Workshop, String> wsLocationCol;
     @FXML private TableColumn<Workshop, Integer> wsSpotsCol;
 
-    // Exhibitions
     @FXML private TableView<Exhibition> exhibitionTable;
     @FXML private TableColumn<Exhibition, String> exTitleCol;
     @FXML private TableColumn<Exhibition, String> exThemeCol;
     @FXML private TableColumn<Exhibition, String> exStartCol;
     @FXML private TableColumn<Exhibition, String> exEndCol;
     @FXML private TableColumn<Exhibition, String> exGalleryCol;
+    @FXML private TableColumn<Exhibition, String> exArtworksCol;
 
-    // Reviews
     @FXML private TableView<Review> reviewTable;
     @FXML private TableColumn<Review, String> rvArtworkCol;
     @FXML private TableColumn<Review, Integer> rvRatingCol;
     @FXML private TableColumn<Review, String> rvCommentCol;
     @FXML private TableColumn<Review, String> rvDateCol;
 
-    // Bookings
     @FXML private TableView<Booking> bookingTable;
     @FXML private TableColumn<Booking, String> bkWorkshopCol;
     @FXML private TableColumn<Booking, String> bkDateCol;
     @FXML private TableColumn<Booking, String> bkStatusCol;
+
+    @FXML private TableView<Artwork> artworkPurchaseTable;
+    @FXML private TableColumn<Artwork, String> apTitleCol;
+    @FXML private TableColumn<Artwork, Double> apPriceCol;
+    @FXML private TableColumn<Artwork, String> apStatusCol;
 
     private final ArtworkService artworkService = ServiceProvider.getArtworkService();
     private final WorkshopService workshopService = ServiceProvider.getWorkshopService();
@@ -106,10 +114,10 @@ public class UserDashboardController {
         setupExhibitions();
         setupReviews();
         setupBookings();
+        setupArtworkPurchases();
         setupDiscover();
     }
 
-    //  Discover 
     private void setupDiscover() {
         exhibitionService.getAllExhibitions().stream().limit(3).forEach(e -> {
             VBox card = makeCard("#e3f2fd", "#2196f3");
@@ -147,13 +155,12 @@ public class UserDashboardController {
         return l;
     }
 
-    //  Artworks 
     private void setupArtworks() {
         artIdCol.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getId_artwork()).asObject());
         artTitleCol.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTitle_art()));
         artTypeCol.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getType()));
         artMediumCol.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getMedium()));
-        artPriceCol.setCellValueFactory(c -> new javafx.beans.property.SimpleDoubleProperty(c.getValue().getPrice()).asObject());
+        artPriceCol.setCellValueFactory(c -> new SimpleDoubleProperty(c.getValue().getPrice()).asObject());
         artStatusCol.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getStatus().name()));
         artArtistCol.setCellValueFactory(c -> {
             var artist = artistService.getAllArtists().stream()
@@ -177,14 +184,66 @@ public class UserDashboardController {
 
     @FXML private void handleArtworkReset() { artworkSearch.clear(); loadArtworks(); }
 
-    //  Workshops 
+    @FXML private void handleReserveArtwork() {
+        Artwork selected = artworkTable.getSelectionModel().getSelectedItem();
+        if (selected == null) { warn("Please select an artwork to reserve."); return; }
+        if (selected.getStatus() != ArtworkStatus.AVAILABLE) {
+            warn("This artwork is not available for reservation."); return;
+        }
+
+        Member member = getCurrentMember();
+        if (member == null) { warn("Your account is not linked to a member profile. Only members can reserve artworks."); return; }
+
+        boolean alreadyReserved = isArtworkReservedByMember(selected.getId_artwork(), member.getId_member());
+        if (alreadyReserved) { warn("You already have a reservation for this artwork."); return; }
+
+        new Alert(Alert.AlertType.CONFIRMATION,
+                "Reserve \"" + selected.getTitle_art() + "\" for $" + selected.getPrice() + "?",
+                ButtonType.YES, ButtonType.NO)
+                .showAndWait().ifPresent(btn -> {
+                    if (btn == ButtonType.YES) {
+                        try {
+                            reserveArtwork(selected.getId_artwork(), member.getId_member());
+                            selected.setStatus(ArtworkStatus.RESERVED);
+                            artworkService.updateArtwork(selected);
+                            loadArtworks();
+                            loadArtworkPurchases();
+                            info("Artwork reserved! You can pay in My Purchases.");
+                        } catch (Exception e) { warn("Cannot reserve: " + e.getMessage()); }
+                    }
+                });
+    }
+
+    private boolean isArtworkReservedByMember(int artworkId, int memberId) {
+        String sql = "SELECT COUNT(*) FROM Artwork_Reservation WHERE id_artwork=? AND id_member=? AND payment_status != 'cancelled'";
+        try (Connection conn = ConnectionManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, artworkId);
+            ps.setInt(2, memberId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt(1) > 0;
+        } catch (SQLException e) { e.printStackTrace(); }
+        return false;
+    }
+
+    private void reserveArtwork(int artworkId, int memberId) throws SQLException {
+        String sql = "INSERT INTO Artwork_Reservation(id_artwork, id_member, reservation_date, payment_status) VALUES (?, ?, ?, 'pending')";
+        try (Connection conn = ConnectionManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, artworkId);
+            ps.setInt(2, memberId);
+            ps.setTimestamp(3, java.sql.Timestamp.valueOf(LocalDateTime.now()));
+            ps.executeUpdate();
+        }
+    }
+
     private void setupWorkshops() {
         wsIdCol.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getId_workshop()).asObject());
         wsTitleCol.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTitle_workshop()));
         wsDateCol.setCellValueFactory(c -> new SimpleStringProperty(
                 c.getValue().getDate_workshop() == null ? "" : c.getValue().getDate_workshop().format(DT_FMT)));
         wsLevelCol.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getLevel()));
-        wsPriceCol.setCellValueFactory(c -> new javafx.beans.property.SimpleDoubleProperty(c.getValue().getPrice()).asObject());
+        wsPriceCol.setCellValueFactory(c -> new SimpleDoubleProperty(c.getValue().getPrice()).asObject());
         wsLocationCol.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getLocation()));
         wsSpotsCol.setCellValueFactory(c -> {
             int max = c.getValue().getMax_participants();
@@ -215,14 +274,9 @@ public class UserDashboardController {
         Workshop selected = workshopTable.getSelectionModel().getSelectedItem();
         if (selected == null) { warn("Please select a workshop to book."); return; }
 
-        // Find member linked to current user
-        int userId = SessionManager.getInstance().getUserId();
-        Member member = memberService.getAllMembers().stream()
-                .filter(m -> m.getId_user() == userId).findFirst().orElse(null);
-
+        Member member = getCurrentMember();
         if (member == null) { warn("Your account is not linked to a member profile. Only members can book workshops."); return; }
 
-        // Check already booked
         boolean alreadyBooked = bookingService.getAllBookings().stream()
                 .anyMatch(b -> b.getId_member() == member.getId_member()
                         && b.getId_workshop() == selected.getId_workshop()
@@ -248,7 +302,6 @@ public class UserDashboardController {
                 });
     }
 
-    //  Exhibitions 
     private void setupExhibitions() {
         exTitleCol.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTitle_exhib()));
         exThemeCol.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTheme()));
@@ -259,10 +312,24 @@ public class UserDashboardController {
                     .filter(gl -> gl.getId_gallery() == c.getValue().getId_gallery()).findFirst().orElse(null);
             return new SimpleStringProperty(g == null ? "" : g.getName_gallery());
         });
+        if (exArtworksCol != null) {
+            exArtworksCol.setCellValueFactory(c -> {
+                List<Map<String, String>> rows = ViewHelper.query(
+                        "SELECT a.title_art FROM Exhibition_Artwork ea " +
+                                "JOIN Artwork a ON ea.id_artwork = a.id_artwork " +
+                                "WHERE ea.id_exhibition=? ORDER BY a.title_art",
+                        c.getValue().getId_exhibition());
+                String titles = rows.stream()
+                        .map(r -> r.getOrDefault("title_art", ""))
+                        .filter(s -> !s.isBlank())
+                        .reduce((a, b) -> a + ", " + b)
+                        .orElse("");
+                return new SimpleStringProperty(titles);
+            });
+        }
         exhibitionTable.setItems(FXCollections.observableArrayList(exhibitionService.getAllExhibitions()));
     }
 
-    //  Reviews 
     private void setupReviews() {
         rvArtworkCol.setCellValueFactory(c -> {
             var a = artworkService.getAllArtworks().stream()
@@ -276,18 +343,14 @@ public class UserDashboardController {
     }
 
     private void loadReviews() {
-        int userId = SessionManager.getInstance().getUserId();
-        Member member = memberService.getAllMembers().stream()
-                .filter(m -> m.getId_user() == userId).findFirst().orElse(null);
+        Member member = getCurrentMember();
         if (member == null) return;
         reviewTable.setItems(FXCollections.observableArrayList(
                 reviewService.getReviewsByMember(member.getId_member())));
     }
 
     @FXML private void handleWriteReview() {
-        int userId = SessionManager.getInstance().getUserId();
-        Member member = memberService.getAllMembers().stream()
-                .filter(m -> m.getId_user() == userId).findFirst().orElse(null);
+        Member member = getCurrentMember();
         if (member == null) { warn("Only members can write reviews."); return; }
 
         Dialog<Review> dialog = new Dialog<>();
@@ -306,7 +369,8 @@ public class UserDashboardController {
         ComboBox<Integer> ratingF = new ComboBox<>(FXCollections.observableArrayList(1, 2, 3, 4, 5));
         ratingF.setMaxWidth(Double.MAX_VALUE);
         TextArea commentF = new TextArea();
-        commentF.setPrefRowCount(3); commentF.setWrapText(true);
+        commentF.setPrefRowCount(3);
+        commentF.setWrapText(true);
 
         VBox box = new VBox(8,
                 new Label("Artwork:"), artworkF,
@@ -349,7 +413,6 @@ public class UserDashboardController {
                 });
     }
 
-    //  Bookings 
     private void setupBookings() {
         bkWorkshopCol.setCellValueFactory(c -> {
             var w = workshopService.getAllWorkshops().stream()
@@ -363,12 +426,25 @@ public class UserDashboardController {
     }
 
     private void loadBookings() {
-        int userId = SessionManager.getInstance().getUserId();
-        Member member = memberService.getAllMembers().stream()
-                .filter(m -> m.getId_user() == userId).findFirst().orElse(null);
+        Member member = getCurrentMember();
         if (member == null) return;
         bookingTable.setItems(FXCollections.observableArrayList(
                 bookingService.getBookingsByMemberId(member.getId_member())));
+    }
+
+    @FXML private void handlePayBooking() {
+        Booking sel = bookingTable.getSelectionModel().getSelectedItem();
+        if (sel == null) { warn("Please select a booking to pay."); return; }
+        if (sel.getPayment_status() == PaymentStatusType.PAID) { warn("This booking is already paid."); return; }
+        if (sel.getPayment_status() == PaymentStatusType.CANCELLED) { warn("This booking is cancelled."); return; }
+        new Alert(Alert.AlertType.CONFIRMATION, "Confirm payment for this booking?", ButtonType.YES, ButtonType.NO)
+                .showAndWait().ifPresent(btn -> {
+                    if (btn == ButtonType.YES) {
+                        sel.setPayment_status(PaymentStatusType.PAID);
+                        try { bookingService.updateBooking(sel); loadBookings(); info("Payment confirmed!"); }
+                        catch (Exception e) { warn("Cannot process payment: " + e.getMessage()); }
+                    }
+                });
     }
 
     @FXML private void handleCancelBooking() {
@@ -385,16 +461,112 @@ public class UserDashboardController {
                 });
     }
 
-    //  Logout 
+    private void setupArtworkPurchases() {
+        apTitleCol.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTitle_art()));
+        apPriceCol.setCellValueFactory(c -> new SimpleDoubleProperty(c.getValue().getPrice()).asObject());
+        apStatusCol.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getStatus().name()));
+        loadArtworkPurchases();
+    }
+
+    private void loadArtworkPurchases() {
+        Member member = getCurrentMember();
+        if (member == null) return;
+        List<Map<String, String>> rows = ViewHelper.query(
+                "SELECT a.id_artwork, a.title_art, a.price, ar.payment_status " +
+                        "FROM Artwork_Reservation ar " +
+                        "JOIN Artwork a ON ar.id_artwork = a.id_artwork " +
+                        "WHERE ar.id_member=? AND ar.payment_status != 'cancelled' ORDER BY a.title_art",
+                member.getId_member());
+        ObservableList<Artwork> list = FXCollections.observableArrayList();
+        for (Map<String, String> row : rows) {
+            Artwork a = new Artwork();
+            try { a.setId_artwork(Integer.parseInt(row.getOrDefault("id_artwork", "0"))); } catch (NumberFormatException ignored) {}
+            a.setTitle_art(row.getOrDefault("title_art", ""));
+            try { a.setPrice(Double.parseDouble(row.getOrDefault("price", "0"))); } catch (NumberFormatException ignored) {}
+            String ps = row.getOrDefault("payment_status", "pending").toUpperCase();
+            if (ps.equals("PAID")) a.setStatus(ArtworkStatus.SOLD);
+            else a.setStatus(ArtworkStatus.RESERVED);
+            list.add(a);
+        }
+        artworkPurchaseTable.setItems(list);
+    }
+
+    @FXML private void handlePayArtwork() {
+        Artwork sel = artworkPurchaseTable.getSelectionModel().getSelectedItem();
+        if (sel == null) { warn("Please select an artwork reservation to pay."); return; }
+        if (sel.getStatus() == ArtworkStatus.SOLD) { warn("This artwork is already paid."); return; }
+        if (sel.getStatus() != ArtworkStatus.RESERVED) { warn("This reservation cannot be paid."); return; }
+
+        Member member = getCurrentMember();
+        if (member == null) return;
+
+        new Alert(Alert.AlertType.CONFIRMATION,
+                "Confirm payment for \"" + sel.getTitle_art() + "\" ($" + sel.getPrice() + ")?",
+                ButtonType.YES, ButtonType.NO)
+                .showAndWait().ifPresent(btn -> {
+                    if (btn == ButtonType.YES) {
+                        try {
+                            updateArtworkReservationStatus(sel.getId_artwork(), member.getId_member(), "paid");
+                            sel.setStatus(ArtworkStatus.SOLD);
+                            artworkService.updateArtwork(sel);
+                            loadArtworkPurchases();
+                            loadArtworks();
+                            info("Payment confirmed! Artwork is now yours.");
+                        } catch (Exception e) { warn("Cannot process payment: " + e.getMessage()); }
+                    }
+                });
+    }
+
+    @FXML private void handleCancelArtwork() {
+        Artwork sel = artworkPurchaseTable.getSelectionModel().getSelectedItem();
+        if (sel == null) { warn("Please select an artwork reservation to cancel."); return; }
+        if (sel.getStatus() == ArtworkStatus.SOLD) { warn("This artwork is already paid and cannot be cancelled."); return; }
+
+        Member member = getCurrentMember();
+        if (member == null) return;
+
+        new Alert(Alert.AlertType.CONFIRMATION,
+                "Cancel reservation for \"" + sel.getTitle_art() + "\"?",
+                ButtonType.YES, ButtonType.NO)
+                .showAndWait().ifPresent(btn -> {
+                    if (btn == ButtonType.YES) {
+                        try {
+                            updateArtworkReservationStatus(sel.getId_artwork(), member.getId_member(), "cancelled");
+                            sel.setStatus(ArtworkStatus.AVAILABLE);
+                            artworkService.updateArtwork(sel);
+                            loadArtworkPurchases();
+                            loadArtworks();
+                        } catch (Exception e) { warn("Cannot cancel: " + e.getMessage()); }
+                    }
+                });
+    }
+
+    private void updateArtworkReservationStatus(int artworkId, int memberId, String paymentStatus) throws SQLException {
+        String sql = "UPDATE Artwork_Reservation SET payment_status=? WHERE id_artwork=? AND id_member=? AND payment_status != 'cancelled'";
+        try (Connection conn = ConnectionManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, paymentStatus);
+            ps.setInt(2, artworkId);
+            ps.setInt(3, memberId);
+            ps.executeUpdate();
+        }
+    }
+
     @FXML private void handleLogout() {
         SessionManager.getInstance().logout();
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/project/artconnect/ui/LoginView.fxml"));
             Scene scene = new Scene(loader.load(), 600, 500);
             Stage stage = (Stage) welcomeLabel.getScene().getWindow();
-            stage.setTitle("ArtConnect – Login");
+            stage.setTitle("ArtConnect - Login");
             stage.setScene(scene);
         } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    private Member getCurrentMember() {
+        int userId = SessionManager.getInstance().getUserId();
+        return memberService.getAllMembers().stream()
+                .filter(m -> m.getId_user() == userId).findFirst().orElse(null);
     }
 
     private void warn(String msg) { new Alert(Alert.AlertType.WARNING, msg, ButtonType.OK).showAndWait(); }

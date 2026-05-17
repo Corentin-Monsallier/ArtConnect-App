@@ -19,7 +19,6 @@
 
     <TabPane VBox.vgrow="ALWAYS" tabClosingPolicy="UNAVAILABLE">
 
-        <!-- DISCOVER -->
         <Tab text="Discover">
             <ScrollPane fitToWidth="true">
                 <FlowPane fx:id="discoverPane" hgap="15" vgap="15">
@@ -28,10 +27,10 @@
             </ScrollPane>
         </Tab>
 
-        <!-- ARTWORKS + BUY -->
         <Tab text="Artworks">
             <VBox spacing="10">
                 <padding><Insets top="10" left="10" right="10" bottom="10"/></padding>
+
                 <HBox spacing="10" alignment="CENTER_LEFT">
                     <TextField fx:id="artworkSearch" promptText="Search by title or artist..." HBox.hgrow="ALWAYS"/>
                     <ComboBox fx:id="artworkStatusFilter" promptText="Filter by status" prefWidth="150"/>
@@ -41,6 +40,7 @@
                     <Button text="Search" onAction="#handleArtworkSearch"/>
                     <Button text="Reset" onAction="#handleArtworkReset"/>
                 </HBox>
+
                 <TableView fx:id="artworkTable" VBox.vgrow="ALWAYS">
                     <columns>
                         <TableColumn fx:id="mArtTitleCol" text="Title" prefWidth="160"/>
@@ -50,27 +50,30 @@
                         <TableColumn fx:id="mArtYearCol" text="Year" prefWidth="65"/>
                         <TableColumn fx:id="mArtPriceCol" text="Price" prefWidth="80"/>
                         <TableColumn fx:id="mArtStatusCol" text="Status" prefWidth="90"/>
+                        <TableColumn fx:id="mArtDisciplinesCol" text="Disciplines" prefWidth="160"/>
                     </columns>
                 </TableView>
+
                 <HBox spacing="10">
-                    <Button text="Buy Selected Artwork" onAction="#handleBuyArtwork"
-                            style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 13;"/>
-                    <Button text="Write Review" onAction="#handleWriteReviewFromArtwork"
+                    <Button text="Reserve Artwork" onAction="#handleReserveArtwork"
+                            style="-fx-background-color: #9C27B0; -fx-text-fill: white; -fx-font-size: 13;"/>
+                    <Button text="Write Review" onAction="#handleWriteReviewSelectedArtwork"
                             style="-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-size: 13;"/>
                 </HBox>
             </VBox>
         </Tab>
 
-        <!-- REVIEWS (all) -->
         <Tab text="Reviews">
             <VBox spacing="10">
                 <padding><Insets top="10" left="10" right="10" bottom="10"/></padding>
+
                 <HBox spacing="10" alignment="CENTER_LEFT">
                     <TextField fx:id="reviewSearch" promptText="Search by artwork or reviewer..." HBox.hgrow="ALWAYS"/>
                     <ComboBox fx:id="reviewRatingFilter" promptText="Filter by rating" prefWidth="150"/>
                     <Button text="Search" onAction="#handleReviewSearch"/>
                     <Button text="Reset" onAction="#handleReviewReset"/>
                 </HBox>
+
                 <TableView fx:id="reviewTable" VBox.vgrow="ALWAYS">
                     <columns>
                         <TableColumn fx:id="mRvArtworkCol" text="Artwork" prefWidth="180"/>
@@ -83,17 +86,18 @@
             </VBox>
         </Tab>
 
-        <!-- EXHIBITIONS -->
         <Tab text="Exhibitions">
             <VBox spacing="10">
                 <padding><Insets top="10" left="10" right="10" bottom="10"/></padding>
+
                 <HBox spacing="10" alignment="CENTER_LEFT">
                     <TextField fx:id="exhibitionSearch" promptText="Search by title or theme..." HBox.hgrow="ALWAYS"/>
                     <ComboBox fx:id="exhibitionGalleryFilter" promptText="Filter by gallery" prefWidth="180"/>
                     <Button text="Search" onAction="#handleExhibitionSearch"/>
                     <Button text="Reset" onAction="#handleExhibitionReset"/>
                 </HBox>
-                <TableView fx:id="exhibitionTable" VBox.vgrow="ALWAYS">
+
+                <TableView fx:id="exhibitionTable" prefHeight="200">
                     <columns>
                         <TableColumn fx:id="mExTitleCol" text="Title" prefWidth="180"/>
                         <TableColumn fx:id="mExGalleryCol" text="Gallery" prefWidth="160"/>
@@ -102,19 +106,31 @@
                         <TableColumn fx:id="mExEndCol" text="End" prefWidth="110"/>
                     </columns>
                 </TableView>
+
+                <Label text="Artworks in selected exhibition:" style="-fx-font-weight: bold;"/>
+
+                <TableView fx:id="exhibitionArtworkTable" VBox.vgrow="ALWAYS" prefHeight="160">
+                    <columns>
+                        <TableColumn fx:id="mExArtTitleCol" text="Title" prefWidth="200"/>
+                        <TableColumn fx:id="mExArtArtistCol" text="Artist" prefWidth="160"/>
+                        <TableColumn fx:id="mExArtTypeCol" text="Type" prefWidth="110"/>
+                        <TableColumn fx:id="mExArtStatusCol" text="Status" prefWidth="100"/>
+                    </columns>
+                </TableView>
             </VBox>
         </Tab>
 
-        <!-- WORKSHOPS + BOOK -->
         <Tab text="Workshops">
             <VBox spacing="10">
                 <padding><Insets top="10" left="10" right="10" bottom="10"/></padding>
+
                 <HBox spacing="10" alignment="CENTER_LEFT">
                     <TextField fx:id="workshopSearch" promptText="Search by title or location..." HBox.hgrow="ALWAYS"/>
                     <ComboBox fx:id="workshopAvailFilter" promptText="Filter by availability" prefWidth="170"/>
                     <Button text="Search" onAction="#handleWorkshopSearch"/>
                     <Button text="Reset" onAction="#handleWorkshopReset"/>
                 </HBox>
+
                 <TableView fx:id="workshopTable" VBox.vgrow="ALWAYS">
                     <columns>
                         <TableColumn fx:id="mWsTitleCol" text="Title" prefWidth="170"/>
@@ -126,6 +142,7 @@
                         <TableColumn fx:id="mWsAvailCol" text="Status" prefWidth="90"/>
                     </columns>
                 </TableView>
+
                 <HBox spacing="10">
                     <Button text="Book Selected Workshop" onAction="#handleBookWorkshop"
                             style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 13;"/>
@@ -133,41 +150,75 @@
             </VBox>
         </Tab>
 
-        <!-- MY BOOKINGS -->
-        <Tab text="My Bookings">
-            <VBox spacing="10">
+        <Tab text="My Purchases">
+            <VBox spacing="15">
                 <padding><Insets top="10" left="10" right="10" bottom="10"/></padding>
+
+                <Label text="Workshop bookings" style="-fx-font-size: 15; -fx-font-weight: bold;"/>
+
                 <HBox spacing="10" alignment="CENTER_LEFT">
                     <TextField fx:id="bookingSearch" promptText="Search by workshop..." HBox.hgrow="ALWAYS"/>
                     <ComboBox fx:id="bookingStatusFilter" promptText="Filter by status" prefWidth="160"/>
                     <Button text="Search" onAction="#handleBookingSearch"/>
                     <Button text="Reset" onAction="#handleBookingReset"/>
                 </HBox>
-                <TableView fx:id="bookingTable" VBox.vgrow="ALWAYS">
+
+                <TableView fx:id="bookingTable" prefHeight="210">
                     <columns>
-                        <TableColumn fx:id="mBkWorkshopCol" text="Workshop" prefWidth="200"/>
-                        <TableColumn fx:id="mBkDateCol" text="Booking Date" prefWidth="160"/>
-                        <TableColumn fx:id="mBkStatusCol" text="Status" prefWidth="120"/>
+                        <TableColumn fx:id="mBkWorkshopCol" text="Workshop" prefWidth="240"/>
+                        <TableColumn fx:id="mBkDateCol" text="Booking Date" prefWidth="170"/>
+                        <TableColumn fx:id="mBkStatusCol" text="Payment Status" prefWidth="140"/>
                     </columns>
                 </TableView>
+
                 <HBox spacing="10">
-                    <Button text="Pay" onAction="#handlePayBooking"
+                    <Button text="Pay Workshop Booking" onAction="#handlePayBooking"
                             style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
-                    <Button text="Cancel" onAction="#handleCancelBooking"
+                    <Button text="Cancel Workshop Booking" onAction="#handleCancelBooking"
+                            style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
+                </HBox>
+
+                <Separator/>
+
+                <Label text="Artwork purchases / reservations" style="-fx-font-size: 15; -fx-font-weight: bold;"/>
+
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <TextField fx:id="purchaseSearch" promptText="Search by artwork or artist..." HBox.hgrow="ALWAYS"/>
+                    <ComboBox fx:id="purchaseStatusFilter" promptText="Filter by status" prefWidth="160"/>
+                    <Button text="Search" onAction="#handlePurchaseSearch"/>
+                    <Button text="Reset" onAction="#handlePurchaseReset"/>
+                </HBox>
+
+                <TableView fx:id="artworkPurchaseTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="mPcArtworkCol" text="Artwork" prefWidth="220"/>
+                        <TableColumn fx:id="mPcArtistCol" text="Artist" prefWidth="160"/>
+                        <TableColumn fx:id="mPcPriceCol" text="Price" prefWidth="90"/>
+                        <TableColumn fx:id="mPcTypeCol" text="Type" prefWidth="120"/>
+                        <TableColumn fx:id="mPcDateCol" text="Date" prefWidth="170"/>
+                        <TableColumn fx:id="mPcStatusCol" text="Payment Status" prefWidth="140"/>
+                    </columns>
+                </TableView>
+
+                <HBox spacing="10">
+                    <Button text="Pay Artwork" onAction="#handlePayArtworkPurchase"
+                            style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+                    <Button text="Cancel Artwork Reservation" onAction="#handleCancelArtworkPurchase"
                             style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
                 </HBox>
             </VBox>
         </Tab>
 
-        <!-- MY REVIEWS -->
         <Tab text="My Reviews">
             <VBox spacing="10">
                 <padding><Insets top="10" left="10" right="10" bottom="10"/></padding>
+
                 <HBox spacing="10" alignment="CENTER_LEFT">
                     <TextField fx:id="myReviewSearch" promptText="Search by artwork..." HBox.hgrow="ALWAYS"/>
                     <Button text="Search" onAction="#handleMyReviewSearch"/>
                     <Button text="Reset" onAction="#handleMyReviewReset"/>
                 </HBox>
+
                 <TableView fx:id="myReviewTable" VBox.vgrow="ALWAYS">
                     <columns>
                         <TableColumn fx:id="mMyRvArtworkCol" text="Artwork" prefWidth="180"/>
@@ -176,6 +227,7 @@
                         <TableColumn fx:id="mMyRvDateCol" text="Date" prefWidth="130"/>
                     </columns>
                 </TableView>
+
                 <HBox spacing="10">
                     <Button text="Write Review" onAction="#handleWriteReview"
                             style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
@@ -185,17 +237,29 @@
             </VBox>
         </Tab>
 
-        <!-- MY PROFILE -->
         <Tab text="My Profile">
             <VBox spacing="10">
                 <padding><Insets top="20" left="30" right="30" bottom="20"/></padding>
+
                 <Label text="Edit Your Profile" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
-                <Label text="Name:"/> <TextField fx:id="profileName" maxWidth="400"/>
-                <Label text="Email:"/> <TextField fx:id="profileEmail" maxWidth="400"/>
-                <Label text="Phone:"/> <TextField fx:id="profilePhone" maxWidth="400"/>
-                <Label text="City:"/> <TextField fx:id="profileCity" maxWidth="400"/>
-                <Label text="Birth Year:"/> <TextField fx:id="profileBirthYear" maxWidth="400"/>
+
+                <Label text="Name:"/>
+                <TextField fx:id="profileName" maxWidth="400"/>
+
+                <Label text="Email:"/>
+                <TextField fx:id="profileEmail" maxWidth="400"/>
+
+                <Label text="Phone:"/>
+                <TextField fx:id="profilePhone" maxWidth="400"/>
+
+                <Label text="City:"/>
+                <TextField fx:id="profileCity" maxWidth="400"/>
+
+                <Label text="Birth Year:"/>
+                <TextField fx:id="profileBirthYear" maxWidth="400"/>
+
                 <Label fx:id="profileMsg" text="" style="-fx-font-size: 12;"/>
+
                 <Button text="Save Changes" onAction="#handleSaveProfile"
                         style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-padding: 8 20;"/>
             </VBox>

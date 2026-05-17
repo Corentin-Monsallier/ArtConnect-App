@@ -4,13 +4,17 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.project.artconnect.model.Artist;
+import com.project.artconnect.model.PaymentStatusType;
 import com.project.artconnect.model.Workshop;
 import com.project.artconnect.service.ArtistService;
+import com.project.artconnect.service.BookingService;
 import com.project.artconnect.service.WorkshopService;
 import com.project.artconnect.util.ServiceProvider;
 
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -29,6 +33,7 @@ public class WorkshopController {
     @FXML private TableColumn<Workshop, String> dateColumn;
     @FXML private TableColumn<Workshop, Integer> durationColumn;
     @FXML private TableColumn<Workshop, Integer> maxParticipantsColumn;
+    @FXML private TableColumn<Workshop, Integer> currentParticipantsColumn;
     @FXML private TableColumn<Workshop, Double> priceColumn;
     @FXML private TableColumn<Workshop, String> levelColumn;
     @FXML private TableColumn<Workshop, String> locationColumn;
@@ -42,6 +47,7 @@ public class WorkshopController {
 
     private final WorkshopService workshopService = ServiceProvider.getWorkshopService();
     private final ArtistService artistService = ServiceProvider.getArtistService();
+    private final BookingService bookingService = ServiceProvider.getBookingService();
     private static final DateTimeFormatter DT_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     @FXML
@@ -60,16 +66,31 @@ public class WorkshopController {
         artistNameColumn.setCellValueFactory(c -> { Artist a = getArtist(c.getValue().getId_artist()); return new SimpleStringProperty(a == null ? "" : safe(a.getName_user())); });
         artistEmailColumn.setCellValueFactory(c -> { Artist a = getArtist(c.getValue().getId_artist()); return new SimpleStringProperty(a == null ? "" : safe(a.getEmail())); });
         artistCityColumn.setCellValueFactory(c -> { Artist a = getArtist(c.getValue().getId_artist()); return new SimpleStringProperty(a == null ? "" : safe(a.getCity())); });
-        loadWorkshops(); loadLevels();
+
+        if (currentParticipantsColumn != null) {
+            currentParticipantsColumn.setCellValueFactory(c -> {
+                long count = bookingService.getAllBookings().stream()
+                        .filter(b -> b.getId_workshop() == c.getValue().getId_workshop()
+                                && b.getPayment_status() != PaymentStatusType.CANCELLED)
+                        .count();
+                return new SimpleIntegerProperty((int) count).asObject();
+            });
+        }
+
+        loadWorkshops();
+        loadLevels();
         levelFilter.setOnAction(e -> handleSearch());
     }
 
     private void loadWorkshops() { workshopTable.setItems(FXCollections.observableArrayList(workshopService.getAllWorkshops())); }
+
     private void loadLevels() {
         ObservableList<String> levels = FXCollections.observableArrayList("All Levels");
         levels.addAll(workshopService.getAllLevels());
-        levelFilter.setItems(levels); levelFilter.setValue("All Levels");
+        levelFilter.setItems(levels);
+        levelFilter.setValue("All Levels");
     }
+
     private Artist getArtist(int id) { return artistService.getAllArtists().stream().filter(a -> a.getId_artist() == id).findFirst().orElse(null); }
     private String safe(String v) { return v == null ? "" : v; }
 
@@ -130,14 +151,18 @@ public class WorkshopController {
         TextField locationF = new TextField(existing != null ? safe(existing.getLocation()) : "");
         TextField descF     = new TextField(existing != null ? safe(existing.getDescription()) : "");
 
-        List<Artist> artists = artistService.getAllArtists();
-        ComboBox<Artist> artistF = new ComboBox<>(FXCollections.observableArrayList(artists));
+        List<Artist> activeArtists = artistService.getAllArtists().stream()
+                .filter(Artist::isIs_active)
+                .collect(Collectors.toList());
+
+        ComboBox<Artist> artistF = new ComboBox<>(FXCollections.observableArrayList(activeArtists));
         artistF.setConverter(new StringConverter<>() {
-            public String toString(Artist a) { return a == null ? "" : "#" + a.getId_artist() + " – " + a.getName_user(); }
+            public String toString(Artist a) { return a == null ? "" : "#" + a.getId_artist() + " - " + a.getName_user(); }
             public Artist fromString(String s) { return null; }
         });
         artistF.setMaxWidth(Double.MAX_VALUE);
-        if (existing != null) artists.stream().filter(a -> a.getId_artist() == existing.getId_artist()).findFirst().ifPresent(artistF::setValue);
+        if (existing != null)
+            activeArtists.stream().filter(a -> a.getId_artist() == existing.getId_artist()).findFirst().ifPresent(artistF::setValue);
 
         VBox box = new VBox(8,
                 new Label("Title:"), titleF,
@@ -148,7 +173,7 @@ public class WorkshopController {
                 new Label("Level:"), levelF,
                 new Label("Location:"), locationF,
                 new Label("Description:"), descF,
-                new Label("Artist:"), artistF
+                new Label("Artist (active only):"), artistF
         );
         box.setPadding(new Insets(10));
         dialog.getDialogPane().setContent(box);
@@ -157,14 +182,16 @@ public class WorkshopController {
 
         dialog.setResultConverter(btn -> {
             if (btn == saveBtn) {
-                if (artistF.getValue() == null) { warn("Please select an artist."); return null; }
+                if (artistF.getValue() == null) { warn("Please select an active artist."); return null; }
                 Workshop w = existing != null ? existing : new Workshop();
                 w.setTitle_workshop(titleF.getText());
                 try { w.setDate_workshop(LocalDateTime.parse(dateF.getText(), DT_FMT)); } catch (DateTimeParseException ignored) {}
                 try { w.setDuration_minutes(Integer.parseInt(durationF.getText())); } catch (NumberFormatException ignored) {}
                 try { w.setMax_participants(Integer.parseInt(maxF.getText())); } catch (NumberFormatException ignored) {}
                 try { w.setPrice(Double.parseDouble(priceF.getText())); } catch (NumberFormatException ignored) {}
-                w.setLevel(levelF.getText()); w.setLocation(locationF.getText()); w.setDescription(descF.getText());
+                w.setLevel(levelF.getText());
+                w.setLocation(locationF.getText());
+                w.setDescription(descF.getText());
                 w.setId_artist(artistF.getValue().getId_artist());
                 return w;
             }

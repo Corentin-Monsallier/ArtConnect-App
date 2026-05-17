@@ -8,7 +8,6 @@
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.project.artconnect.ui.UserDashboardController">
 
-    <!-- Top bar -->
     <HBox style="-fx-background-color: #2196F3; -fx-padding: 10;" alignment="CENTER_LEFT" spacing="10">
         <Label fx:id="welcomeLabel" style="-fx-text-fill: white; -fx-font-size: 16; -fx-font-weight: bold;"/>
         <Region HBox.hgrow="ALWAYS"/>
@@ -19,7 +18,6 @@
 
     <TabPane VBox.vgrow="ALWAYS">
 
-        <!-- Discover -->
         <Tab text="Discover" closable="false">
             <ScrollPane fitToWidth="true">
                 <FlowPane fx:id="discoverPane" hgap="15" vgap="15">
@@ -28,7 +26,6 @@
             </ScrollPane>
         </Tab>
 
-        <!-- Artworks - read only -->
         <Tab text="Artworks" closable="false">
             <VBox spacing="10">
                 <padding><Insets top="10" left="10" right="10" bottom="10"/></padding>
@@ -48,10 +45,13 @@
                         <TableColumn fx:id="artArtistCol" text="Artist" prefWidth="150"/>
                     </columns>
                 </TableView>
+                <HBox spacing="10">
+                    <Button text="Reserve Selected Artwork" onAction="#handleReserveArtwork"
+                            style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+                </HBox>
             </VBox>
         </Tab>
 
-        <!-- Workshops - with Book button -->
         <Tab text="Workshops" closable="false">
             <VBox spacing="10">
                 <padding><Insets top="10" left="10" right="10" bottom="10"/></padding>
@@ -78,7 +78,6 @@
             </VBox>
         </Tab>
 
-        <!-- Exhibitions - read only -->
         <Tab text="Exhibitions" closable="false">
             <VBox spacing="10">
                 <padding><Insets top="10" left="10" right="10" bottom="10"/></padding>
@@ -89,12 +88,12 @@
                         <TableColumn fx:id="exStartCol" text="Start" prefWidth="120"/>
                         <TableColumn fx:id="exEndCol" text="End" prefWidth="120"/>
                         <TableColumn fx:id="exGalleryCol" text="Gallery" prefWidth="150"/>
+                        <TableColumn fx:id="exArtworksCol" text="Artworks" prefWidth="300"/>
                     </columns>
                 </TableView>
             </VBox>
         </Tab>
 
-        <!-- My Reviews -->
         <Tab text="My Reviews" closable="false">
             <VBox spacing="10">
                 <padding><Insets top="10" left="10" right="10" bottom="10"/></padding>
@@ -115,11 +114,12 @@
             </VBox>
         </Tab>
 
-        <!-- My Bookings -->
-        <Tab text="My Bookings" closable="false">
+        <Tab text="My Purchases" closable="false">
             <VBox spacing="10">
                 <padding><Insets top="10" left="10" right="10" bottom="10"/></padding>
-                <TableView fx:id="bookingTable" VBox.vgrow="ALWAYS">
+
+                <Label text="Workshop Bookings" style="-fx-font-weight: bold; -fx-font-size: 13;"/>
+                <TableView fx:id="bookingTable" prefHeight="220">
                     <columns>
                         <TableColumn fx:id="bkWorkshopCol" text="Workshop" prefWidth="200"/>
                         <TableColumn fx:id="bkDateCol" text="Booking Date" prefWidth="160"/>
@@ -127,9 +127,27 @@
                     </columns>
                 </TableView>
                 <HBox spacing="10">
+                    <Button text="Pay Booking" onAction="#handlePayBooking"
+                            style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
                     <Button text="Cancel Booking" onAction="#handleCancelBooking"
                             style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
                 </HBox>
+
+                <Label text="Artwork Reservations" style="-fx-font-weight: bold; -fx-font-size: 13;"/>
+                <TableView fx:id="artworkPurchaseTable" prefHeight="220">
+                    <columns>
+                        <TableColumn fx:id="apTitleCol" text="Artwork" prefWidth="200"/>
+                        <TableColumn fx:id="apPriceCol" text="Price" prefWidth="100"/>
+                        <TableColumn fx:id="apStatusCol" text="Status" prefWidth="120"/>
+                    </columns>
+                </TableView>
+                <HBox spacing="10">
+                    <Button text="Pay Reservation" onAction="#handlePayArtwork"
+                            style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+                    <Button text="Cancel Reservation" onAction="#handleCancelArtwork"
+                            style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
+                </HBox>
+
             </VBox>
         </Tab>
 

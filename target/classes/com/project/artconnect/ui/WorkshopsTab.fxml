@@ -27,6 +27,7 @@
             <TableColumn fx:id="dateColumn" text="Date" prefWidth="150"/>
             <TableColumn fx:id="durationColumn" text="Duration (min)" prefWidth="110"/>
             <TableColumn fx:id="maxParticipantsColumn" text="Max Part." prefWidth="90"/>
+            <TableColumn fx:id="currentParticipantsColumn" text="Participants" prefWidth="100"/>
             <TableColumn fx:id="priceColumn" text="Price" prefWidth="90"/>
             <TableColumn fx:id="levelColumn" text="Level" prefWidth="100"/>
             <TableColumn fx:id="locationColumn" text="Location" prefWidth="130"/>

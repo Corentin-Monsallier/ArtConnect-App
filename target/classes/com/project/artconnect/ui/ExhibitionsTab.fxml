@@ -39,4 +39,15 @@
         <Button text="Delete Exhibition" onAction="#handleDelete" style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
     </HBox>
 
+    <Label text="Artworks in selected exhibition" style="-fx-font-weight: bold;"/>
+
+    <TableView fx:id="exhibitionArtworkTable" prefHeight="180">
+        <columns>
+            <TableColumn fx:id="eExArtTitleCol" text="Title" prefWidth="200"/>
+            <TableColumn fx:id="eExArtArtistCol" text="Artist" prefWidth="160"/>
+            <TableColumn fx:id="eExArtTypeCol" text="Type" prefWidth="120"/>
+            <TableColumn fx:id="eExArtStatusCol" text="Status" prefWidth="120"/>
+        </columns>
+    </TableView>
+
 </VBox>

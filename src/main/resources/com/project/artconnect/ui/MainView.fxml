@@ -20,9 +20,6 @@
     </HBox>
 
     <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
-        <Tab text="Discover">
-            <fx:include source="DiscoverTab.fxml"/>
-        </Tab>
         <Tab text="Artists">
             <fx:include source="ArtistsTab.fxml"/>
         </Tab>
